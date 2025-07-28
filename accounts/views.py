@@ -4,9 +4,10 @@ from rest_framework import generics, permissions, status
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
 from .models import CustomUser
 from .serializers import RegisterSerializer, UserProfileSerializer
-
+from rest_framework.generics import RetrieveUpdateAPIView
 # Register a new user
 class RegisterView(generics.CreateAPIView):
     permission_classes = [permissions.AllowAny]
@@ -35,7 +36,8 @@ class LoginView(APIView):
         return Response({"error": "Invalid credentials"}, status=400)
 
 # Profile View (GET and PUT)    
-class UserProfileView(APIView):
+class UserProfileView(RetrieveUpdateAPIView):
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -43,10 +45,11 @@ class UserProfileView(APIView):
         return Response(serializer.data)
 
     def put(self, request):
-        serializer = UserProfileSerializer(request.user, data=request.data, partial=True)
+        user = request.user
+        serializer = UserProfileSerializer(user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
+            return Response(serializer.data, status=200)
         return Response(serializer.errors, status=400)
 
 #logout view 
