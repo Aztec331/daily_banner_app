@@ -43,7 +43,7 @@ INSTALLED_APPS = [
 
     #external apps
     'accounts', #user registration, login, profile
-    'subscriptions', #subscription plans and user subscriptions
+    'subscription', #subscription plans and user subscriptions
     # 'templates', #Banner templates (Daily/festival/special)
     # 'mediafiles', #Admin media uploads
     # 'banners', #User-created banners

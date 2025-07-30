@@ -1,0 +1,26 @@
+from rest_framework import serializers
+from .models import SubscriptionPlan, UserSubscription, SubscriptionHistory, SubscriptionStatus
+
+class SubscriptionPlanSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SubscriptionPlan
+        fields = '__all__'
+
+class UserSubscriptionSerializer(serializers.ModelSerializer):
+    plan = SubscriptionPlanSerializer(read_only=True)
+
+    class Meta:
+        model = UserSubscription
+        fields = '__all__'
+
+class SubscribeRequestSerializer(serializers.Serializer):
+    plan_id = serializers.IntegerField()
+
+class SubscriptionStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SubscriptionStatus
+        fields = '__all__'
+class SubscriptionHistorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SubscriptionHistory
+        fields = '__all__'
