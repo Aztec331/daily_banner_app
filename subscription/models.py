@@ -2,6 +2,7 @@ from django.db import models
 from accounts.models import CustomUser
 from django.utils import timezone
 from datetime import timedelta
+from accounts.models import CustomUser
 from django.contrib.auth import get_user_model
 
 user = get_user_model()
@@ -25,7 +26,7 @@ class SubscriptionPlan(models.Model):
         return f"{self.name} ({self.duration_days} days)"
     
 class UserSubscription(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    user = models.OneToOneField(user, on_delete=models.CASCADE)
     plan = models.ForeignKey(SubscriptionPlan, on_delete=models.SET_NULL, null=True)
     start_date = models.DateTimeField(auto_now_add=True)
     end_date = models.DateTimeField()
