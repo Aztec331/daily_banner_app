@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     # 'templates', #Banner templates (Daily/festival/special)
     # 'mediafiles', #Admin media uploads
     # 'banners', #User-created banners
+    'admin_panel'
 
 ]
 AUTH_USER_MODEL = 'accounts.CustomUser'
@@ -68,6 +69,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
 ]
 
 ROOT_URLCONF = 'daily_banner_app.urls'
