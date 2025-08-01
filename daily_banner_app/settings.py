@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'accounts',
     'banner',
+    'mediafiles',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
