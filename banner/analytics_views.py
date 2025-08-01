@@ -1,12 +1,12 @@
-from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser
-from django.utils.timezone import now, timedelta
-
+from django.utils.timezone import now
+from datetime import timedelta
+from banner.models import Banner
 from accounts.models import CustomUser
 from subscription.models import UserSubscription
-# Create your views here.
+
 
 class AdminAnalyticsView(APIView):
     permission_classes = [IsAdminUser]
@@ -15,12 +15,19 @@ class AdminAnalyticsView(APIView):
         today = now().date()
         week_start = today - timedelta(days=7)
 
+        total_banners = Banner.objects.count()
         total_users = CustomUser.objects.count()
         active_users = CustomUser.objects.filter(is_active=True).count()
         total_subscription = UserSubscription.objects.count()
 
+        banners_used_today = Banner.objects.filter(created_at_date = today).count()
+        banners_user_week = Banner.objects.filter(created_at_date_gte=week_start).count()
+
         return Response({
+            "total_Banners":total_banners,
             "total Users": total_users,
             "active Users": active_users,
             "subscriptions": total_subscription,
+            "banners_used_today": banners_used_today,
+            "banners_user_week": banners_user_week
         })

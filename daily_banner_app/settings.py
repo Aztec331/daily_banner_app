@@ -42,12 +42,10 @@ INSTALLED_APPS = [
         
 
     #external apps
-    'accounts', #user registration, login, profile
-    'subscription', #subscription plans and user subscriptions
-    # 'templates', #Banner templates (Daily/festival/special)
-    # 'mediafiles', #Admin media uploads
-    # 'banners', #User-created banners
-    'admin_panel'
+    'accounts',
+    'subscription',
+    'admin_panel',
+    'banner',
 
 ]
 AUTH_USER_MODEL = 'accounts.CustomUser'

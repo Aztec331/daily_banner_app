@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class AnalyticsRepoConfig(AppConfig):
+class BannerConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'Analytics_Repo'
+    name = 'banner'
