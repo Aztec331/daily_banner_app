@@ -1,0 +1,28 @@
+#Python cache
+__pycache__/
+*.py[cod]
+*.pyc
+*.pyo
+
+#Virtual environment
+venv/
+env/
+
+#SQLite DB
+*.sqlite3
+db.sqlite3
+
+#media & uploads
+/media/
+*.jpg
+*.jpeg
+*.png
+
+#VSCode settings(optional)
+.vscode/
+
+#Environment variables
+.env
+
+#Logs
+*.log

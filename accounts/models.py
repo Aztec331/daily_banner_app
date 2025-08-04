@@ -10,7 +10,6 @@ class CustomUser(AbstractUser):
     email = models.EmailField(unique=True)
     name = models.CharField(max_length=100, null=True, blank=True)
     profile_image = models.ImageField(upload_to='profile_images/', null=True, blank=True)
-    user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES, default='user')
     user_logo = models.ImageField(upload_to='logos/', null=True, blank=True)
     user_photo = models.ImageField(upload_to='photos/', null=True, blank=True)
     user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES, default='user')  # 👈 New field

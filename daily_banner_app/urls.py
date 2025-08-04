@@ -25,7 +25,8 @@ urlpatterns = [
     path('api/', include('accounts.urls')),
     path('api/subscription/', include('subscription.urls')),
     path('api/',include('banner.urls')),
-    path('api/admin/', include('admin_panel.urls'))
+    path('api/admin/', include('admin_panel.urls')),
+    path('api/',include('mediafiles.urls'))
 ]
 
 if settings.DEBUG:

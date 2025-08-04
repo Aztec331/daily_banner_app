@@ -15,10 +15,4 @@ class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ['id', 'email', 'username', 'name', 'profile_image', 'user_logo', 'user_photo', 'user_type']
-        read_only_fields = ['email','username']
-
-class CustomUserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CustomUser
-        fields = ['id','username','email','user_type','is_active','profile_image','user_logo','user_photo']
-        read_only_fields = ['email','username']
+        read_only_fields = ['id', 'email', 'username', 'user_type']  # 🔐 Locked fields
