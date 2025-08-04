@@ -1,8 +1,7 @@
 from rest_framework import serializers
-from .models import MediaAsset
+from .models import Media
 
-class MediaAssetSerializer(serializers.ModelSerializer):
+class MediaSerializer(serializers.ModelSerializer):
     class Meta:
-        model = MediaAsset
-        fields = ['id','user','file','media_type','uploaded_at']
-        read_only_fields= ['id','user','uploaded_at']
+        model = Media
+        fields = '__all__'

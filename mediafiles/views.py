@@ -1,30 +1,21 @@
-from rest_framework import generics, permissions
-from rest_framework.parsers import MultiPartParser, FormParser
-from .models import MediaAsset
-from .serializers import MediaAssetSerializer
+from rest_framework import generics, status
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
+from .models import Media
+from .serializers import MediaSerializer
 
 class MediaListView(generics.ListAPIView):
-    queryset= MediaAsset.objects.all()
-    serializer_class = MediaAssetSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    queryset = Media.objects.all()
+    serializer_class = MediaSerializer
+    permission_classes = [AllowAny]
 
-    def get_queryset(self):
-        return MediaAsset.objects.filter(user=self.request.user)
-    
 class MediaUploadView(generics.CreateAPIView):
-    queryset= MediaAsset.objects.all()
-    serializer_class = MediaAssetSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    parser_classes = [MultiPartParser, FormParser] #MultiPartparser- images and videos #Formparser- text and names etc
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+    queryset = Media.objects.all()
+    serializer_class = MediaSerializer
+    permission_classes = [AllowAny]
 
 class MediaDeleteView(generics.DestroyAPIView):
-    queryset = MediaAsset.objects.all()
-    serializer_class = MediaAssetSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_queryset(self):
-        return MediaAsset.objects.filter(user=self.request.user)
-    
+    queryset = Media.objects.all()
+    serializer_class = MediaSerializer
+    permission_classes = [AllowAny]
+    lookup_field = 'id'

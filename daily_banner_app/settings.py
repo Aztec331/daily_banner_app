@@ -40,8 +40,7 @@ REST_FRAMEWORK = {
 # Application definition
 
 INSTALLED_APPS = [
-    'rest_framework.authtoken',
-    'rest_framework',
+    'mediafiles',
     'accounts',
     'banner',
     'mediafiles',
