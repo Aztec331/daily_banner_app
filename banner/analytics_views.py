@@ -7,7 +7,6 @@ from banner.models import Banner
 from accounts.models import CustomUser
 from subscription.models import UserSubscription
 
-
 class AdminAnalyticsView(APIView):
     permission_classes = [IsAdminUser]
     
@@ -20,13 +19,13 @@ class AdminAnalyticsView(APIView):
         active_users = CustomUser.objects.filter(is_active=True).count()
         total_subscription = UserSubscription.objects.count()
 
-        banners_used_today = Banner.objects.filter(created_at_date = today).count()
-        banners_user_week = Banner.objects.filter(created_at_date_gte=week_start).count()
+        banners_used_today = Banner.objects.filter(created_at__date=today).count()
+        banners_user_week = Banner.objects.filter(created_at__date__gte=week_start).count()
 
         return Response({
-            "total_Banners":total_banners,
-            "total Users": total_users,
-            "active Users": active_users,
+            "total_banners": total_banners,
+            "total_users": total_users,
+            "active_users": active_users,
             "subscriptions": total_subscription,
             "banners_used_today": banners_used_today,
             "banners_user_week": banners_user_week

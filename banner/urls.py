@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from banner.analytics_views import AdminAnalyticsView
 
 urlpatterns = [
     # Templates
@@ -12,4 +13,6 @@ urlpatterns = [
     path('banner/mine/', views.MyBannersListView.as_view(), name='banner-mine'),
     path('banner/<int:pk>/', views.BannerDetailView.as_view(), name='banner-detail'),
     path('banner/<int:pk>/delete/', views.BannerDeleteView.as_view(), name='banner-delete'),
+    path('admin/analytics/',AdminAnalyticsView.as_view(),name='admin-analytics')
+
 ]

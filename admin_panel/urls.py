@@ -7,7 +7,7 @@ from .views import(
     TemplateUpdateDeleteView,
     AdminMediaListView,
 )
-from banner.analytics_views import AdminAnalyticsView
+
 
 urlpatterns = [
     #users
@@ -25,6 +25,5 @@ urlpatterns = [
     #media
     path('media/', AdminMediaListView.as_view(), name= 'admin-medial-list'),
 
-    #analytics and reports
-    path('analytics/', AdminAnalyticsView.as_view(), name='admin-analytics'),
+    
 ]
