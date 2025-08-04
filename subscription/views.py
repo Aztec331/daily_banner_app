@@ -2,13 +2,14 @@ from django.shortcuts import render
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status, permissions
-from .models import SubscriptionPlan, UserSubscription, SubscriptionHistory
+from rest_framework import status, permissions, generics
+from .models import SubscriptionPlan, UserSubscription, SubscriptionHistory, SubscriptionRenew
 from .serializers import (
     SubscriptionPlanSerializer,
     UserSubscriptionSerializer,
     SubscribeRequestSerializer,
-    SubscriptionHistorySerializer
+    SubscriptionHistorySerializer,
+    SubscriptionRenewSerializer,
 )
 from django.utils import timezone
 from datetime import timedelta
@@ -103,5 +104,11 @@ class CancelSubscriptionView(APIView):
         except UserSubscription.DoesNotExist:
             return Response({"error": "No active subscription found."}, status=status.HTTP_404_NOT_FOUND)
         
-    
-        
+
+class SubscriptionRenewCreateView(generics.CreateAPIView):
+    queryset = SubscriptionRenew.objects.all()
+    serializer_class = SubscriptionRenewSerializer
+    permissions_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(renewed_by=self.request.user)

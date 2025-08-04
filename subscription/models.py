@@ -3,6 +3,7 @@ from accounts.models import CustomUser
 from django.utils import timezone
 from datetime import timedelta
 from django.contrib.auth import get_user_model
+from django.conf import settings
 
 user = get_user_model()
 
@@ -58,3 +59,11 @@ class SubscriptionStatus(models.Model):
 
     def __str__(self):
         return f"{self.user} - {self.current_status}"
+    
+class SubscriptionRenew(models.Model):
+    user_subscription = models.ForeignKey(UserSubscription, on_delete=models.CASCADE)
+    renewed_by = models.ForeignKey(settings.AUTH_USER_MODEL,null=True, blank=True, on_delete=models.CASCADE)  # ✅ correct
+    renewed_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Renewed: {self.user_subscription} by {self.renewed_by}"

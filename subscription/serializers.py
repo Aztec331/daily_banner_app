@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import SubscriptionPlan, UserSubscription, SubscriptionHistory, SubscriptionStatus
+from .models import SubscriptionPlan, UserSubscription, SubscriptionHistory, SubscriptionStatus, SubscriptionRenew
 
 class SubscriptionPlanSerializer(serializers.ModelSerializer):
     class Meta:
@@ -24,3 +24,8 @@ class SubscriptionHistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = SubscriptionHistory
         fields = '__all__'
+
+class SubscriptionRenewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model= SubscriptionRenew
+        fields = ['user_subscription']

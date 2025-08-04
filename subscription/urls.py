@@ -4,7 +4,8 @@ from .views import (
     SubscribeView,
     SubscriptionStatusView,
     SubscriptionHistoryView,
-    CancelSubscriptionView
+    CancelSubscriptionView,
+    SubscriptionRenewCreateView
 )
 
 urlpatterns = [
@@ -13,4 +14,5 @@ urlpatterns = [
     path('status/', SubscriptionStatusView.as_view(), name='subscription-status'),
     path('history/', SubscriptionHistoryView.as_view(), name='subscription-history'),
     path('cancel/', CancelSubscriptionView.as_view(), name='cancel-subscription'),
+    path('Renew/',SubscriptionRenewCreateView.as_view(),name="Subscription-renew"),
 ]
