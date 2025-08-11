@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 import os
 from pathlib import Path
+from corsheaders.defaults import default_headers
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,18 +26,19 @@ SECRET_KEY = 'django-insecure-q!q)1j=fziwav6ic%$=k3@9r+^=q3#p_s9pz@3n3e!s=y$h1yv
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost','127.0.0.1']
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
 }
 
-
+SITE_ID= 1
 # Application definition
 
 INSTALLED_APPS = [
@@ -49,6 +51,13 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
         
+    #other apps
+    'corsheaders',
+    'dj_rest_auth',
+    'dj_rest_auth.registration',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
 
     #external apps
     'accounts',
@@ -65,11 +74,15 @@ AUTH_USER_MODEL = 'accounts.CustomUser'
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
+    #'accounts.middleware.CookieToAuthorizationMiddleware',
 
 ]
 
@@ -93,15 +106,19 @@ TEMPLATES = [
 WSGI_APPLICATION = 'daily_banner_app.wsgi.application'
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR / 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR , 'media')
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'daily_banner_db',
+        'USER':'banner_user',
+        'PASSWORD': 'DailyBannerApp01',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
@@ -136,15 +153,27 @@ USE_I18N = True
 
 USE_TZ = True
 
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_AUTHENTICATION_METHOD = 'username'
+ 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
-
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+STATIC_ROOT= os.path.join(BASE_DIR, 'staticfiles')
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-  
+CORS_ALLOW_ALL_ORIGINS = True
+
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'authorization',
+]
+
+RAZORPAY_KEY_ID = 'rzp_test_cB8TVykpqqbxSn'
+
+

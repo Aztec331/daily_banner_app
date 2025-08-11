@@ -5,12 +5,14 @@ from .views import (
     SubscriptionStatusView,
     SubscriptionHistoryView,
     CancelSubscriptionView,
-    SubscriptionRenewCreateView
+    SubscriptionRenewCreateView,
+    PaymentSuccessView
 )
 
 urlpatterns = [
     path('plans/', SubscriptionPlanListView.as_view(), name='subscription-plans'),
     path('subscribe/', SubscribeView.as_view(), name='subscribe'),
+    path('payment/success/',PaymentSuccessView.as_view(),name = 'payment-success'),
     path('status/', SubscriptionStatusView.as_view(), name='subscription-status'),
     path('history/', SubscriptionHistoryView.as_view(), name='subscription-history'),
     path('cancel/', CancelSubscriptionView.as_view(), name='cancel-subscription'),

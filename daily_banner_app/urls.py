@@ -20,13 +20,17 @@ from rest_framework.authtoken.views import obtain_auth_token
 from django.conf.urls.static import static
 from django.conf import settings
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('accounts.urls')),
     path('api/subscription/', include('subscription.urls')),
     path('api/',include('banner.urls')),
     path('api/admin/', include('admin_panel.urls')),
-    path('api/',include('mediafiles.urls'))
+    path('api/',include('mediafiles.urls')),
+    path('api/token/', obtain_auth_token, name='api_token_auth'),
+    path('auth/social/', include("dj_rest_auth.registration.urls")),
+    path('auth/', include('dj_rest_auth.urls')),
 ]
 
 if settings.DEBUG:

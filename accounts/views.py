@@ -6,8 +6,10 @@ from django.contrib.auth import authenticate
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from .models import CustomUser
-from .serializers import RegisterSerializer, UserProfileSerializer
+from .serializers import RegisterSerializer, UserProfileSerializer, LoginSerializer, UserProfileUpdateSerializer
 from rest_framework.generics import RetrieveUpdateAPIView
+
+
 # Register a new user
 class RegisterView(generics.CreateAPIView):
     permission_classes = [permissions.AllowAny]
@@ -27,13 +29,22 @@ class RegisterView(generics.CreateAPIView):
 class LoginView(APIView):
     permission_classes = [permissions.AllowAny]
     def post(self, request):
-        email = request.data.get("email")
-        password = request.data.get("password")
-        user = authenticate(email=email, password=password)
-        if user:
+        serializer = LoginSerializer(data=request.data, context={'request':request})
+        if serializer.is_valid():
+            user = serializer.validated_data['user']
             token, _ = Token.objects.get_or_create(user=user)
-            return Response({"token": token.key})
-        return Response({"error": "Invalid credentials"}, status=400)
+            user_data = {
+                "id": user.id,
+                "email": user.email,
+                "username": user.username,
+                "user_type": user.user_type,
+                "phone": user.phone,
+                "token": token.key
+            }
+            return Response(user_data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        #write all the info of user in response
+        #in JSON file of postman we only need to mention email and password
 
 # Profile View (GET and PUT)    
 class UserProfileView(RetrieveUpdateAPIView):
@@ -45,12 +56,11 @@ class UserProfileView(RetrieveUpdateAPIView):
         return Response(serializer.data)
 
     def put(self, request):
-        user = request.user
-        serializer = UserProfileSerializer(user, data=request.data, partial=True)
+        serializer = UserProfileUpdateSerializer(request.user, data=request.data,partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=200)
-        return Response(serializer.errors, status=400)
+            return Response({"message":"Profile updated successfully"},status=status.HTTP_200_OK)
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
 #logout view 
 class LogoutView(APIView):
@@ -63,3 +73,13 @@ class LogoutView(APIView):
             return Response({"message": "Logged out successfully"}, status=status.HTTP_200_OK)
         except:
             return Response({"error": "Logout failed"}, status=status.HTTP_400_BAD_REQUEST)
+        
+# class UserProfileUpdateView(APIView):
+#     permission_classes = [IsAuthenticated]
+
+#     def put(self, request):
+#         serializer = UserProfileUpdateSerializer(request.user, data=request.data,partial=True)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response({"message":"Profile updated successfully"},status=status.HTTP_200_OK)
+#         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
