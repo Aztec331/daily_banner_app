@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import (
-    SubscriptionPlanListView,
+    PlanListView,
     SubscribeView,
     SubscriptionStatusView,
     SubscriptionHistoryView,
@@ -10,7 +10,7 @@ from .views import (
 )
 
 urlpatterns = [
-    path('plans/', SubscriptionPlanListView.as_view(), name='subscription-plans'),
+    path('plans/', PlanListView.as_view(), name='plans-List'),
     path('subscribe/', SubscribeView.as_view(), name='subscribe'),
     path('payment/success/',PaymentSuccessView.as_view(),name = 'payment-success'),
     path('status/', SubscriptionStatusView.as_view(), name='subscription-status'),
