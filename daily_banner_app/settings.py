@@ -65,7 +65,7 @@ INSTALLED_APPS = [
     'admin_panel',
     'banner',
     'mediafiles',
-
+    'business_panel',
 ]
 AUTH_USER_MODEL = 'accounts.CustomUser'
 
