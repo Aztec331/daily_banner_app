@@ -9,12 +9,14 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
+import dj_database_url
+from decouple import config
 import os
 from pathlib import Path
 from corsheaders.defaults import default_headers
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 AUTH_USER_MODEL= 'accounts.CustomUser'
 
 # Quick-start development settings - unsuitable for production
@@ -26,7 +28,7 @@ SECRET_KEY = 'django-insecure-q!q)1j=fziwav6ic%$=k3@9r+^=q3#p_s9pz@3n3e!s=y$h1yv
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost','127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -50,6 +52,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    'accounts.apps.AccountsConfig',
         
     #other apps
     'corsheaders',
@@ -58,9 +61,10 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    #'dj-database-url',
 
     #external apps
-    'accounts',
+    #'accounts',
     'subscription',
     'admin_panel',
     'banner',
@@ -111,17 +115,33 @@ MEDIA_ROOT = os.path.join(BASE_DIR , 'media')
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'daily_banner_db',
-        'USER':'banner_user',
-        'PASSWORD': 'DailyBannerApp01',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'daily_banner_db',
+#         'USER': 'banner_user',
+#         'PASSWORD': 'DailyBannerApp01',
+#         'HOST': 'postgresql://daily_banner_app_user:ISNQtyeICuB8oa0gw9bNQBqCSvwQIHst@dpg-d2e4kaggjchc73e13om0-a.oregon-postgres.render.com/daily_banner_app',  # use your actual host here
+#         'PORT': '5432',
+#         'OPTIONS': {
+#             'sslmode': 'require'
+#         }
+#     }
+# }
 
+
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         default=config('DATABASE_URL',cast=str, default='sqlite:///daily_banner_app.db'),
+#     )
+# }
+DATABASES = {
+    "default": dj_database_url.parse(
+        "postgres://daily_banner_app_user:ISNQtyeICuB8oa0gw9bNQBqCSvwQIHst@dpg-d2e4kaggjchc73e13om0-a.oregon-postgres.render.com/daily_banner_app",
+        conn_max_age=600,
+        ssl_require=True
+    )
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -170,9 +190,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_ALL_ORIGINS = True
 
-CORS_ALLOW_HEADERS = list(default_headers) + [
-    'authorization',
-]
+# CORS_ALLOW_HEADERS = list(default_headers) + [
+#     'authorization',
+# ]
 
 RAZORPAY_KEY_ID = 'rzp_test_cB8TVykpqqbxSn'
 

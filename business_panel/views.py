@@ -38,3 +38,6 @@ class BusinessDeleteView(generics.DestroyAPIView):
     def get_queryset(self):
         # Only allow deleting businesses owned by the logged-in user
         return Business.objects.filter(user=self.request.user)
+from django.shortcuts import render
+
+# Create your views here.
