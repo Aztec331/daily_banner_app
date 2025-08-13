@@ -16,7 +16,7 @@ from pathlib import Path
 from corsheaders.defaults import default_headers
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 AUTH_USER_MODEL= 'accounts.CustomUser'
 
 # Quick-start development settings - unsuitable for production
@@ -115,19 +115,19 @@ MEDIA_ROOT = os.path.join(BASE_DIR , 'media')
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'daily_banner_db',
-        'USER': 'banner_user',
-        'PASSWORD': 'DailyBannerApp01',
-        'HOST': 'postgresql://daily_banner_app_user:ISNQtyeICuB8oa0gw9bNQBqCSvwQIHst@dpg-d2e4kaggjchc73e13om0-a.oregon-postgres.render.com/daily_banner_app',  # use your actual host here
-        'PORT': '5432',
-        'OPTIONS': {
-            'sslmode': 'require'
-        }
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'daily_banner_db',
+#         'USER': 'banner_user',
+#         'PASSWORD': 'DailyBannerApp01',
+#         'HOST': 'postgresql://daily_banner_app_user:ISNQtyeICuB8oa0gw9bNQBqCSvwQIHst@dpg-d2e4kaggjchc73e13om0-a.oregon-postgres.render.com/daily_banner_app',  # use your actual host here
+#         'PORT': '5432',
+#         'OPTIONS': {
+#             'sslmode': 'require'
+#         }
+#     }
+# }
 
 
 # DATABASES = {
@@ -136,8 +136,10 @@ DATABASES = {
 #     )
 # }
 DATABASES = {
-    'default': dj_database_url.parse(
-        config('DATABASE_URL')
+    "default": dj_database_url.parse(
+        "postgres://daily_banner_app_user:ISNQtyeICuB8oa0gw9bNQBqCSvwQIHst@dpg-d2e4kaggjchc73e13om0-a.oregon-postgres.render.com/daily_banner_app",
+        conn_max_age=600,
+        ssl_require=True
     )
 }
 
