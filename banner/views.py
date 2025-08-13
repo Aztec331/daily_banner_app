@@ -72,7 +72,7 @@ class BannerDeleteView(generics.DestroyAPIView):
         return Banner.objects.filter(user=self.request.user)
 
 class BannerDownloadView(APIView):
-    permission_classes= [IsAuthenticated]
+    permission_classes= [AllowAny]
     def get(self, request, pk):
         try:
             banner = Banner.objects.get(pk=pk)
