@@ -10,7 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 import dj_database_url
-import yaml
+from decouple import config
 import os
 from pathlib import Path
 from corsheaders.defaults import default_headers
@@ -61,7 +61,7 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'dj-database-url'
+    #'dj-database-url',
 
     #external apps
     #'accounts',
@@ -126,14 +126,16 @@ MEDIA_ROOT = os.path.join(BASE_DIR , 'media')
 #     }
 # }
 
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         default=config('DATABASE_URL',cast=str, default='sqlite:///daily_banner_app.db'),
+#     )
+# }
 DATABASES = {
-    'default': dj_database_url.config(
-        default=config['render'],
-        conn_max_age=config.get('CONN_MAX_AGE',600),
-        ssl_require=config.get('SSL_REQUIRE',False),
+    'default': dj_database_url.parse(
+        config('DATABASE_URL')
     )
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
