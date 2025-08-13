@@ -9,6 +9,8 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
+import dj_database_url
+import yaml
 import os
 from pathlib import Path
 from corsheaders.defaults import default_headers
@@ -26,7 +28,7 @@ SECRET_KEY = 'django-insecure-q!q)1j=fziwav6ic%$=k3@9r+^=q3#p_s9pz@3n3e!s=y$h1yv
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost','127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -50,6 +52,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    'accounts.apps.AccountsConfig',
         
     #other apps
     'corsheaders',
@@ -58,9 +61,10 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    'dj-database-url'
 
     #external apps
-    'accounts',
+    #'accounts',
     'subscription',
     'admin_panel',
     'banner',
@@ -111,15 +115,23 @@ MEDIA_ROOT = os.path.join(BASE_DIR , 'media')
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'daily_banner_db',
+#         'USER':'banner_user',
+#         'PASSWORD': 'DailyBannerApp01',
+#         'HOST': '127.0.0.1',
+#         'PORT': '5432',
+#     }
+# }
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'daily_banner_db',
-        'USER':'banner_user',
-        'PASSWORD': 'DailyBannerApp01',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
+    'default': dj_database_url.config(
+        default=config['render'],
+        conn_max_age=config.get('CONN_MAX_AGE',600),
+        ssl_require=config.get('SSL_REQUIRE',False),
+    )
 }
 
 
@@ -170,9 +182,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_ALL_ORIGINS = True
 
-CORS_ALLOW_HEADERS = list(default_headers) + [
-    'authorization',
-]
+# CORS_ALLOW_HEADERS = list(default_headers) + [
+#     'authorization',
+# ]
 
 RAZORPAY_KEY_ID = 'rzp_test_cB8TVykpqqbxSn'
 
