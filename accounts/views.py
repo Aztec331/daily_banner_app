@@ -2,7 +2,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import generics, permissions, status
 from rest_framework.authtoken.models import Token
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import update_last_login
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from .models import CustomUser
@@ -28,10 +29,14 @@ class RegisterView(generics.CreateAPIView):
 # Login and return token
 class LoginView(APIView):
     permission_classes = [permissions.AllowAny]
+    
     def post(self, request):
         serializer = LoginSerializer(data=request.data, context={'request':request})
         if serializer.is_valid():
             user = serializer.validated_data['user']
+            
+            update_last_login(None, user)
+            
             token, _ = Token.objects.get_or_create(user=user)
             user_data = {
                 "id": user.id,
@@ -41,6 +46,7 @@ class LoginView(APIView):
                 "phone": user.phone,
                 "token": token.key
             }
+
             return Response(user_data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         #write all the info of user in response
