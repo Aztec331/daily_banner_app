@@ -3,8 +3,7 @@ from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from .models import Business
 from .serializers import BusinessSerializer
-<<<<<<< HEAD
-=======
+from django.shortcuts import render
 
 # GET /user/businesses
 class UserBusinessListView(generics.ListAPIView):
@@ -40,8 +39,7 @@ class BusinessDeleteView(generics.DestroyAPIView):
     def get_queryset(self):
         # Only allow deleting businesses owned by the logged-in user
         return Business.objects.filter(user=self.request.user)
->>>>>>> e5c64f20f21b679e927217597826b664eba451a4
-from django.shortcuts import render
+
 
 # GET /user/businesses
 class UserBusinessListView(generics.ListAPIView):
