@@ -9,6 +9,7 @@ from rest_framework.authentication import TokenAuthentication
 from .models import CustomUser
 from .serializers import RegisterSerializer, UserProfileSerializer, LoginSerializer, UserProfileUpdateSerializer
 from rest_framework.generics import RetrieveUpdateAPIView
+from django.utils.timezone import now
 
 
 # Register a new user
