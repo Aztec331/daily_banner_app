@@ -76,7 +76,7 @@ class PaymentSuccessView(APIView):
         order_id = request.data.get("order_id")
         payment_id = request.data.get("payment_id")
         #signature = request.data.get("signature")
-        if not all([order_id, payment_id, signature]):
+        if not all([order_id, payment_id]):
             return Response({"status": "error", "message": "Missing order_id or payment_id"}, status=400)
         # try:
         #     params_dict = {

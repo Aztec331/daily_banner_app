@@ -12,28 +12,43 @@ class CompanyDetailsSerializer(serializers.ModelSerializer):
 
 
 class RegisterSerializer(serializers.ModelSerializer):
-    
     class Meta:
         model = CustomUser
-        fields =['id', 'email','phone', 'username', 'password', 'user_type'] 
-        # extra_kwargs = {'password': {'write_only': True}}
-        
+        fields = ['id', 'email', 'phone', 'username', 'password', 'user_type']
+        extra_kwargs = {'password': {'write_only': True}}
+
     def validate_phone(self, value):
         import re
         pattern = r'^\+91\d{10}$'
         if not re.match(pattern, value):
             raise serializers.ValidationError("Phone number must start with +91 and be followed by exactly 10 digits.")
         return value
-    
+
     def create(self, validated_data):
-        company_data = validated_data.pop('company_details',None)
-        user = CustomUser.objects.create_user(**validated_data)
+        user_type = validated_data.get('user_type', 'user')
+        company_data = validated_data.pop('company_details', None)
+
+        # ✅ explicitly pass user_type
+        user = CustomUser.objects.create_user(
+            username=validated_data['username'],
+            email=validated_data['email'],
+            phone=validated_data['phone'],
+            password=validated_data['password'],
+            user_type=user_type
+        )
+
+        # ✅ if admin → mark as staff
+        if user_type == 'admin':
+            user.is_staff = True
+            user.save()
 
         if company_data:
             company = CompanyDetails.objects.create(**company_data)
             user.company_details = company
             user.save()
+
         return user
+
         
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
