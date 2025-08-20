@@ -1,16 +1,44 @@
 from django.shortcuts import render, get_object_or_404
-from rest_framework import generics
+from rest_framework import generics, permissions, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser
-
+from rest_framework.authtoken.models import Token
+from django.contrib.auth import get_user_model
 from accounts.models import CustomUser
 from accounts.serializers import CustomUserSerializer
 from subscription.models import UserSubscription
 from subscription.serializers import UserSubscriptionSerializer
 from .models import BannerTemplate, UploadedMedia
-from .serializers import BannerTemplateSerializer, UploadedMediaSerializer
+from .serializers import BannerTemplateSerializer, UploadedMediaSerializer, AdminLoginSerializer
 
+
+
+class AdminLoginView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        serializer = AdminLoginSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            user = serializer.validated_data['user']
+
+            # Ensure only admin/staff can login here
+            if not user.is_staff and not user.is_superuser:
+                return Response({"detail": "Not authorized as admin."}, status=status.HTTP_403_FORBIDDEN)
+
+            token, _ = Token.objects.get_or_create(user=user)
+            user_data = {
+                "id": user.id,
+                "email": user.email,
+                "username": user.username,
+                "is_staff": user.is_staff,
+                "is_superuser": user.is_superuser,
+                "token": token.key,
+            }
+
+            return Response(user_data, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 # Admin user list with optional status filter
 class AdminUserListView(generics.ListAPIView):
     permission_classes = [IsAdminUser]

@@ -14,7 +14,7 @@ class CompanyDetailsSerializer(serializers.ModelSerializer):
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['id', 'email', 'phone', 'username', 'password', 'user_type']
+        fields = ['id', 'email', 'phone', 'username', 'password', 'user_type','company_details']
         extra_kwargs = {'password': {'write_only': True}}
 
     def validate_phone(self, value):

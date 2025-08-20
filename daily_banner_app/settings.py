@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'accounts.apps.AccountsConfig',
+    'django.contrib.sites',
         
     #other apps
     'corsheaders',
@@ -61,6 +62,7 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
     #'dj-database-url',
 
     #external apps
@@ -70,11 +72,13 @@ INSTALLED_APPS = [
     'banner',
     'mediafiles',
     'business_panel',
+    'greetings',
 ]
 AUTH_USER_MODEL = 'accounts.CustomUser'
 
 AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend', 
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
 MIDDLEWARE = [
@@ -198,4 +202,21 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 RAZORPAY_KEY_ID = 'rzp_test_cB8TVykpqqbxSn'
 
+SOCIALACCOUNT_PROVIDERS = {
+        'google': {
+        #'APP': {
+         #   'client_id': "33936103700-7a6110ahctl234qb52g0eie6t32qv53j.apps.googleusercontent.com",
+          #  'secret': "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",}
+            
+        },
+        'SCOPE': ['profile','email',], # type: ignore
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+}
 
+GOOGLE_OAUTH_CLIENT_ID = os.getenv("33936103700-7a6110ahctl234qb52g0eie6t32qv53j.apps.googleusercontent.com")
+GOOGLE_OAUTH_CLIENT_SECRET = os.getenv("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")
+
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'

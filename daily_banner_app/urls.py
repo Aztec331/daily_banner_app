@@ -32,6 +32,8 @@ urlpatterns = [
     path('auth/social/', include("dj_rest_auth.registration.urls")),
     path('auth/', include('dj_rest_auth.urls')),
     path('api/', include('business_panel.urls')),
+    path('accounts/', include('allauth.urls')),
+    path('api/', include('greetings.urls')),
 ]
 
 if settings.DEBUG:

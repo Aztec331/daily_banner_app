@@ -2,6 +2,33 @@ from rest_framework import serializers
 from .models import BannerTemplate,UploadedMedia
 from subscription.models import UserSubscription
 from accounts.serializers import CustomUserSerializer
+from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+class AdminLoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True)
+
+    def validate(self, attrs):
+        request = self.context.get("request")
+        email = attrs.get("email")
+        password = attrs.get("password")
+
+        try:
+            # always use your CustomUser here
+            user_obj = User.objects.get(email=email)
+            user = authenticate(request=request, username=user_obj.email, password=password)
+        except User.DoesNotExist:
+            user = None
+
+        if not user:
+            raise serializers.ValidationError("Invalid email or password.")
+
+        attrs["user"] = user
+        return attrs
 
 class BannerTemplateSerializer(serializers.ModelSerializer):
     class Meta:
