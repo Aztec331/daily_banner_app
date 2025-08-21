@@ -28,7 +28,7 @@ class AdminLoginSerializer(serializers.Serializer):
             raise serializers.ValidationError("Invalid email or password.")
 
         attrs["user"] = user
-        return attrs
+        return attrs 
 
 class BannerTemplateSerializer(serializers.ModelSerializer):
     class Meta:

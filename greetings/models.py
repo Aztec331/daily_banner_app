@@ -19,6 +19,12 @@ class GreetingTemplate(models.Model):
     description = models.TextField(blank=True, null=True)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="created_templates")
     created_at = models.DateTimeField(auto_now_add=True)
+    default_text = models.TextField(blank=True, null=True)
+    default_background = models.URLField(blank=True, null=True)
+    default_stickers  = models.JSONField(default=list,blank=True, null=True)
+    default_emojis = models.JSONField(default=list,blank=True, null=True)
+    layout = models.CharField(max_length=50, choices=[('vertical','Vertical'),('horizontal','Horizontal')], default='vertical')
+
 
     def __str__(self):
         return self.title
@@ -30,6 +36,7 @@ class Greeting(models.Model):
     recipient_email = models.EmailField()
     message = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+    customizations = models.JSONField(default=dict, blank=True, null=True)
 
     def __str__(self):
         return f"Greeting from {self.sender.username} to {self.recipient_email}"
