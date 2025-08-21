@@ -30,6 +30,8 @@ class GreetingTemplate(models.Model):
     customizations = models.JSONField(default=dict, blank=True, null=True)
     tags = models.JSONField(default=list, blank=True, null=True)
     is_active = models.BooleanField(default=True)
+    likes_count = models.PositiveIntegerField(default=0)  # to keep track of likes count
+    downloads_count = models.PositiveIntegerField(default=0)  # to keep track of downloads count
     
     
 def __str__(self):
@@ -53,6 +55,7 @@ class GreetingTemplateLike(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="template_likes")
     created_at = models.DateTimeField(auto_now_add=True) #set once when created
     liked_at = models.DateTimeField(auto_now=True) #updated every time the like is toggled
+    likes_count = models.IntegerField(default=0)  # to keep track of likes count
     
     
 
@@ -66,7 +69,9 @@ class GreetingTemplateLike(models.Model):
 class GreetingTemplateDownload(models.Model):
     template = models.ForeignKey(GreetingTemplate, on_delete=models.CASCADE, related_name="downloads")
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="template_downloads")
-    downloaded_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)  # set once when created
+    downloaded_at = models.DateTimeField(auto_now=True)
+    
 
     def __str__(self):
         return f"{self.user.username} downloaded {self.template.title}"

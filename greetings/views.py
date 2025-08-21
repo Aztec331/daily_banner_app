@@ -76,23 +76,21 @@ class GreetingTemplateLikeView(APIView):
         like, created = GreetingTemplateLike.objects.get_or_create(user=user, template=template)
 
         if not created:
-            # Already liked -> Unlike
-            template.likes_count = F("likes_count") - 1  # decrement counter
-            template.save(update_fields=["likes_count"])
-            template.refresh_from_db()
+            # Already liked → Unlike
+            like.delete()
+            likes_count = GreetingTemplateLike.objects.filter(template=template).count()
             return Response({
                 "message": "Unliked successfully",
-                "likes_count": template.likes_count
+                "likes_count": likes_count
             }, status=status.HTTP_200_OK)
 
-        template.likes_count = F("likes_count") + 1
-        template.likes_count = F("likes_count") + 1
-        template.save(update_fields=["likes_count"])
-        template.refresh_from_db()
+        # New like
+        likes_count = GreetingTemplateLike.objects.filter(template=template).count()
         return Response({
             "message": "Liked successfully",
-            "likes_count": template.likes_count
+            "likes_count": likes_count
         }, status=status.HTTP_201_CREATED)
+
 
 
 # 7.6 Download Greeting Template
@@ -103,10 +101,30 @@ class GreetingTemplateDownloadView(APIView):
         template = get_object_or_404(GreetingTemplate, pk=pk)
         user = request.user
 
-        download, created = GreetingTemplateDownload.objects.get_or_create(user=user, template=template)
+        download, created = GreetingTemplateDownload.objects.get_or_create(
+            user=user, template=template
+        )
 
         serializer = GreetingTemplateDownloadSerializer(download)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        if created:
+            # If you want to increment a counter
+            template.downloads_count = F("downloads_count") + 1
+            template.save(update_fields=["downloads_count"])
+            template.refresh_from_db()
+
+            return Response({
+                "message": "Downloaded successfully",
+                "downloads_count": template.downloads_count,
+                "download": serializer.data
+            }, status=status.HTTP_201_CREATED)
+
+        return Response({
+            "message": "Already downloaded",
+            "downloads_count": template.downloads_count,
+            "download": serializer.data
+        }, status=status.HTTP_200_OK)
+
 
 
 # 7.7 Create Greeting
