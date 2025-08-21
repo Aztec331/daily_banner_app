@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 from banner.analytics_views import AdminAnalyticsView
-from .views import BannerDownloadView  # Make sure to import BannerDownloadView
+from .views import BannerDownloadView, FontListView, FontCategoryView  # Make sure to import BannerDownloadView
 
 urlpatterns = [
     # Templates
@@ -16,4 +16,8 @@ urlpatterns = [
     path('banner/<int:pk>/delete/', views.BannerDeleteView.as_view(), name='banner-delete'),
     path('admin/analytics/', AdminAnalyticsView.as_view(), name='admin-analytics'),
     path('banner/<int:pk>/download/', BannerDownloadView.as_view(), name='banner-download'),
+
+    #Fonts
+    path('fonts/', FontListView.as_view(), name='font-list'),
+    path('fonts/categories/', FontCategoryView.as_view(), name='font-categories'),
 ]
