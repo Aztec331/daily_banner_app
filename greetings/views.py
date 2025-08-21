@@ -9,6 +9,7 @@ from .models import (
     GreetingTemplateLike,
     GreetingTemplateDownload
 )
+from django.db.models import F
 from .serializers import (
     GreetingCategorySerializer,
     GreetingTemplateSerializer,
@@ -68,27 +69,38 @@ class GreetingTemplateSearchView(generics.ListAPIView):
 class GreetingTemplateLikeView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def post(self, request, id):
-        template = get_object_or_404(GreetingTemplate, id=id)
+    def post(self, request, pk):
+        template = get_object_or_404(GreetingTemplate, pk=pk)
         user = request.user
 
         like, created = GreetingTemplateLike.objects.get_or_create(user=user, template=template)
 
         if not created:
-            # already liked -> toggle (unlike)
-            like.delete()
-            return Response({"message": "Unliked successfully"}, status=status.HTTP_200_OK)
+            # Already liked -> Unlike
+            template.likes_count = F("likes_count") - 1  # decrement counter
+            template.save(update_fields=["likes_count"])
+            template.refresh_from_db()
+            return Response({
+                "message": "Unliked successfully",
+                "likes_count": template.likes_count
+            }, status=status.HTTP_200_OK)
 
-        serializer = GreetingTemplateLikeSerializer(like)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        template.likes_count = F("likes_count") + 1
+        template.likes_count = F("likes_count") + 1
+        template.save(update_fields=["likes_count"])
+        template.refresh_from_db()
+        return Response({
+            "message": "Liked successfully",
+            "likes_count": template.likes_count
+        }, status=status.HTTP_201_CREATED)
 
 
 # 7.6 Download Greeting Template
 class GreetingTemplateDownloadView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def post(self, request, id):
-        template = get_object_or_404(GreetingTemplate, id=id)
+    def post(self, request, pk):
+        template = get_object_or_404(GreetingTemplate, pk=pk)
         user = request.user
 
         download, created = GreetingTemplateDownload.objects.get_or_create(user=user, template=template)
@@ -105,5 +117,5 @@ class GreetingCreateView(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data, context={"request": request})
         serializer.is_valid(raise_exception=True)
-        serializer.save(user=request.user)
+        serializer.save(sender=request.user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)

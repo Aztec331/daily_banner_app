@@ -46,7 +46,7 @@ class GreetingTemplateSerializer(serializers.ModelSerializer):
 class GreetingTemplateLikeSerializer(serializers.ModelSerializer):
     class Meta:
         model = GreetingTemplateLike
-        fields = ['id', 'user', 'template', 'created_at']
+        fields = ['id', 'user', 'template', 'created_at','likes_count']
 
 
 class GreetingTemplateDownloadSerializer(serializers.ModelSerializer):

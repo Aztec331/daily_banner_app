@@ -24,10 +24,16 @@ class GreetingTemplate(models.Model):
     default_stickers  = models.JSONField(default=list,blank=True, null=True)
     default_emojis = models.JSONField(default=list,blank=True, null=True)
     layout = models.CharField(max_length=50, choices=[('vertical','Vertical'),('horizontal','Horizontal')], default='vertical')
-
-
-    def __str__(self):
-        return self.title
+    language = models.CharField(max_length=50, default='en')
+    is_premium = models.BooleanField(default=False)
+    updated_at = models.DateTimeField(auto_now=True)
+    customizations = models.JSONField(default=dict, blank=True, null=True)
+    tags = models.JSONField(default=list, blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+    
+    
+def __str__(self):
+    return self.title
 
 
 class Greeting(models.Model):
@@ -45,7 +51,10 @@ class Greeting(models.Model):
 class GreetingTemplateLike(models.Model):
     template = models.ForeignKey(GreetingTemplate, on_delete=models.CASCADE, related_name="likes")
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="template_likes")
-    liked_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True) #set once when created
+    liked_at = models.DateTimeField(auto_now=True) #updated every time the like is toggled
+    
+    
 
     class Meta:
         unique_together = ("template", "user")  # prevent duplicate likes
