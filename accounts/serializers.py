@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Company
+from .models import CompanyDetails
 from django.contrib.auth import authenticate
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -7,7 +7,7 @@ class RegisterSerializer(serializers.ModelSerializer):
     confirm_password = serializers.CharField(write_only=True)
 
     class Meta:
-        model = Company
+        model = CompanyDetails
         fields = ['company_name', 'company_logo', 'business_category', 'phone_no',
                   'alternate_phone_no', 'email', 'company_website', 'company_address',
                   'password', 'confirm_password']
@@ -20,7 +20,7 @@ class RegisterSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data.pop('confirm_password')
         password = validated_data.pop('password')
-        user = Company.objects.create_user(password=password, **validated_data)
+        user = CompanyDetails.objects.create_user(password=password, **validated_data)
         return user
 
 
@@ -40,6 +40,6 @@ class LoginSerializer(serializers.Serializer):
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Company
+        model = CompanyDetails
         fields = ['company_name', 'company_logo', 'business_category', 'phone_no',
                   'alternate_phone_no', 'email', 'company_website', 'company_address']

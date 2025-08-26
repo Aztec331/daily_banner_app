@@ -10,7 +10,7 @@ from greetings.models import Greeting, GreetingTemplate, GreetingTemplateLike, G
 from banner.models import Banner
 from subscription.models import UserSubscription as Subscription
 from mediafiles.models import Media as MediaFile
-from accounts.models import CustomUser as User
+from accounts.models import CompanyDetails
 
 from .serializers import (
     DashboardSerializer,
@@ -58,8 +58,8 @@ class DashboardView(APIView):
 
         # 5. Users Data
         users_data = {
-            "total_users": User.objects.count(),
-            "active_users": User.objects.filter(is_active=True).count()
+            "total_users": CompanyDetails.objects.count(),
+            "active_users": CompanyDetails.objects.filter(is_active=True).count()
         }
 
         # 6. Recent Activities (last 10)

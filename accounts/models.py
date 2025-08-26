@@ -17,7 +17,7 @@ class CompanyManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 
-class Company(AbstractBaseUser, PermissionsMixin):
+class CompanyDetails(AbstractBaseUser, PermissionsMixin):
     BUSINESS_CATEGORY_CHOICES = [
         ('Event Planners', 'Event Planners'),
         ('Decorators', 'Decorators'),
@@ -41,6 +41,9 @@ class Company(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['company_name', 'business_category', 'phone_no', 'company_address']
+
+    class Meta:
+        app_label = 'accounts'
 
     def __str__(self):
         return self.company_name

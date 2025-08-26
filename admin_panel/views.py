@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import get_user_model
-from accounts.models import Company
+from accounts.models import CompanyDetails
 from accounts.serializers import RegisterSerializer
 from subscription.models import UserSubscription
 from subscription.serializers import UserSubscriptionSerializer
@@ -44,7 +44,7 @@ class AdminUserListView(generics.ListAPIView):
     permission_classes = [IsAdminUser]
 
     def get(self, request):
-        users = Company.objects.all()
+        users = CompanyDetails.objects.all()
         status_filter = request.query_params.get('status')
         if status_filter == 'active':
             users = users.filter(is_active=True)
@@ -58,12 +58,12 @@ class AdminUserDetailView(APIView):
     permission_classes = [IsAdminUser]
 
     def get(self, request, id):
-        user = get_object_or_404(Company, id=id)
+        user = get_object_or_404(CompanyDetails, id=id)
         serializer = RegisterSerializer(user)
         return Response(serializer.data)
 
     def put(self, request, id):
-        user = get_object_or_404(Company, id=id)
+        user = get_object_or_404(CompanyDetails, id=id)
         user.is_active = request.data.get('is_active', user.is_active)
         user.save()
         return Response({'detail': 'User status updated'})
@@ -104,7 +104,7 @@ class SubscribedUsersListView(APIView):
 
     def get(self, request):
         user_ids = UserSubscription.objects.filter(is_active=True).values_list('user_id', flat=True).distinct()
-        users = Company.objects.filter(id__in=user_ids)
+        users = CompanyDetails.objects.filter(id__in=user_ids)
 
         serializer = RegisterSerializer(users, many=True)
         return Response(serializer.data)

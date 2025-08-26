@@ -1,6 +1,6 @@
 from django.contrib import admin
 from rest_framework.authtoken.models import Token
-from .models import Company
+from .models import CompanyDetails
 
 # Unregister Token if already registered (safe cleanup)
 try:
@@ -9,7 +9,7 @@ except admin.sites.NotRegistered:
     pass
 
 # Register your CustomUser model
-@admin.register(Company)
+@admin.register(CompanyDetails)
 class CustomUserAdmin(admin.ModelAdmin):
     list_display = ('id', 'email', 'is_active', 'is_staff')  # Customize as per your model
     search_fields = ('email',)

@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import login, logout
 
-from .models import Company
+from .models import CompanyDetails
 from .serializers import RegisterSerializer, LoginSerializer, ProfileSerializer
 
 class RegisterView(generics.CreateAPIView):
