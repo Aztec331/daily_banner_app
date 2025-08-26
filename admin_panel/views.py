@@ -5,8 +5,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import get_user_model
-from accounts.models import CustomUser
-from accounts.serializers import CustomUserSerializer
+from accounts.models import Company
+from accounts.serializers import RegisterSerializer
 from subscription.models import UserSubscription
 from subscription.serializers import UserSubscriptionSerializer
 from .models import BannerTemplate, UploadedMedia
@@ -44,13 +44,13 @@ class AdminUserListView(generics.ListAPIView):
     permission_classes = [IsAdminUser]
 
     def get(self, request):
-        users = CustomUser.objects.all()
+        users = Company.objects.all()
         status_filter = request.query_params.get('status')
         if status_filter == 'active':
             users = users.filter(is_active=True)
         elif status_filter == 'expired':
             users = users.filter(subscription__status='expired')
-        serializer = CustomUserSerializer(users, many=True)
+        serializer = RegisterSerializer(users, many=True)
         return Response(serializer.data)
 
 # Admin user detail view
@@ -58,12 +58,12 @@ class AdminUserDetailView(APIView):
     permission_classes = [IsAdminUser]
 
     def get(self, request, id):
-        user = get_object_or_404(CustomUser, id=id)
-        serializer = CustomUserSerializer(user)
+        user = get_object_or_404(Company, id=id)
+        serializer = RegisterSerializer(user)
         return Response(serializer.data)
 
     def put(self, request, id):
-        user = get_object_or_404(CustomUser, id=id)
+        user = get_object_or_404(Company, id=id)
         user.is_active = request.data.get('is_active', user.is_active)
         user.save()
         return Response({'detail': 'User status updated'})
@@ -104,7 +104,7 @@ class SubscribedUsersListView(APIView):
 
     def get(self, request):
         user_ids = UserSubscription.objects.filter(is_active=True).values_list('user_id', flat=True).distinct()
-        users = CustomUser.objects.filter(id__in=user_ids)
+        users = Company.objects.filter(id__in=user_ids)
 
-        serializer = CustomUserSerializer(users, many=True)
+        serializer = RegisterSerializer(users, many=True)
         return Response(serializer.data)

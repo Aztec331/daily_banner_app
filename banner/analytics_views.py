@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAdminUser
 from django.utils.timezone import now
 from datetime import timedelta
 from banner.models import Banner
-from accounts.models import CustomUser
+from accounts.models import Company
 from subscription.models import UserSubscription
 
 class AdminAnalyticsView(APIView):
@@ -15,8 +15,8 @@ class AdminAnalyticsView(APIView):
         week_start = today - timedelta(days=7)
 
         total_banners = Banner.objects.count()
-        total_users = CustomUser.objects.count()
-        active_users = CustomUser.objects.filter(is_active=True).count()
+        total_users = Company.objects.count()
+        active_users = Company.objects.filter(is_active=True).count()
         total_subscription = UserSubscription.objects.count()
 
         banners_used_today = Banner.objects.filter(created_at__date=today).count()

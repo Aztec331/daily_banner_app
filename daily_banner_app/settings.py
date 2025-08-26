@@ -74,7 +74,7 @@ INSTALLED_APPS = [
     'business_panel',
     'greetings',
 ]
-AUTH_USER_MODEL = 'accounts.CustomUser'
+AUTH_USER_MODEL = 'accounts.Company'
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
@@ -179,8 +179,10 @@ USE_I18N = True
 
 USE_TZ = True
 
-ACCOUNT_EMAIL_VERIFICATION = 'none'
-ACCOUNT_AUTHENTICATION_METHOD = 'username'
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None  # No username field
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
  
 
 # Static files (CSS, JavaScript, Images)

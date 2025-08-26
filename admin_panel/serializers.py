@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import BannerTemplate,UploadedMedia
 from subscription.models import UserSubscription
-from accounts.serializers import CustomUserSerializer
+from accounts.serializers import RegisterSerializer
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
@@ -43,7 +43,7 @@ class UploadedMediaSerializer(serializers.ModelSerializer):
         read_only_fields = ['id','uploaded_at', 'uploaded_by_username']
 
 class SubscriptionSerializer(serializers.ModelSerializer):
-    user = CustomUserSerializer(read_only=True)
+    user = RegisterSerializer(read_only=True)
 
     class Meta:
         model = UserSubscription

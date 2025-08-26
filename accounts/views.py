@@ -1,92 +1,40 @@
-from rest_framework.views import APIView
+from rest_framework import generics, status
 from rest_framework.response import Response
-from rest_framework import generics, permissions, status
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authtoken.models import Token
-from django.contrib.auth import authenticate, login
-from django.contrib.auth.models import update_last_login
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.authentication import TokenAuthentication
-from .models import CustomUser
-from .serializers import RegisterSerializer, UserProfileSerializer, LoginSerializer, UserProfileUpdateSerializer
-from rest_framework.generics import RetrieveUpdateAPIView
-from django.utils.timezone import now
+from django.contrib.auth import login, logout
 
+from .models import Company
+from .serializers import RegisterSerializer, LoginSerializer, ProfileSerializer
 
-# Register a new user
 class RegisterView(generics.CreateAPIView):
-    permission_classes = [permissions.AllowAny]
-    queryset = CustomUser.objects.all()
     serializer_class = RegisterSerializer
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        if not serializer.is_valid():
-            print("Serializer errors:", serializer.errors)  # 👈 shows exact cause
-            return Response(serializer.errors, status=400)
-        self.perform_create(serializer)
-        return Response(serializer.data, status=201)
+    permission_classes = [AllowAny]
 
 
-# Login and return token
 class LoginView(APIView):
-    permission_classes = [permissions.AllowAny]
-    
     def post(self, request):
-        serializer = LoginSerializer(data=request.data, context={'request':request})
-        if serializer.is_valid():
-            user = serializer.validated_data['user']
-            
-            update_last_login(None, user)
-            
-            token, _ = Token.objects.get_or_create(user=user)
-            user_data = {
-                "id": user.id,
-                "email": user.email,
-                "username": user.username,
-                "user_type": user.user_type,
-                "phone": user.phone,
-                "token": token.key
-            }
+        serializer = LoginSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        login(request, user)
+        token, _ = Token.objects.get_or_create(user=user)
+        return Response({"token": token.key, "email": user.email})
 
-            return Response(user_data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        #write all the info of user in response
-        #in JSON file of postman we only need to mention email and password
 
-# Profile View (GET and PUT)    
-class UserProfileView(RetrieveUpdateAPIView):
-    authentication_classes = [TokenAuthentication]
+class ProfileView(generics.RetrieveUpdateAPIView):
+    serializer_class = ProfileSerializer
     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        serializer = UserProfileSerializer(request.user)
-        return Response(serializer.data)
+    def get_object(self):
+        return self.request.user
 
-    def put(self, request):
-        serializer = UserProfileUpdateSerializer(request.user, data=request.data,partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"message":"Profile updated successfully"},status=status.HTTP_200_OK)
-        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
-#logout view 
 class LogoutView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        try:
-            # Deletes the token to log the user out
-            request.user.auth_token.delete()
-            return Response({"message": "Logged out successfully"}, status=status.HTTP_200_OK)
-        except:
-            return Response({"error": "Logout failed"}, status=status.HTTP_400_BAD_REQUEST)
-        
-# class UserProfileUpdateView(APIView):
-#     permission_classes = [IsAuthenticated]
-
-#     def put(self, request):
-#         serializer = UserProfileUpdateSerializer(request.user, data=request.data,partial=True)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response({"message":"Profile updated successfully"},status=status.HTTP_200_OK)
-#         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+        Token.objects.filter(user=request.user).delete()
+        logout(request)
+        return Response({"message": "Logged out successfully"}, status=status.HTTP_200_OK)

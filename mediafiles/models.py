@@ -18,6 +18,7 @@ class Media(models.Model):
     description = models.TextField(blank=True)
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='general')
     uploaded_at = models.DateTimeField(auto_now_add=True)
+    size = models.PositiveIntegerField()  # size in bytes
 
     def __str__(self):
         return self.file_name
