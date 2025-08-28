@@ -34,6 +34,7 @@ urlpatterns = [
     path('api/', include('business_panel.urls')),
     path('accounts/', include('allauth.urls')),
     path('api/', include('greetings.urls')),
+    path('api/dashboard/', include('dashboard.urls')),
 ]
 
 if settings.DEBUG:

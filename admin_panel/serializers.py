@@ -13,22 +13,23 @@ class AdminLoginSerializer(serializers.Serializer):
     password = serializers.CharField(write_only=True)
 
     def validate(self, attrs):
-        request = self.context.get("request")
         email = attrs.get("email")
         password = attrs.get("password")
 
         try:
-            # always use your CustomUser here
-            user_obj = User.objects.get(email=email)
-            user = authenticate(request=request, username=user_obj.email, password=password)
+            user = User.objects.get(email=email)
         except User.DoesNotExist:
-            user = None
-
-        if not user:
             raise serializers.ValidationError("Invalid email or password.")
 
+        if not user.check_password(password):
+            raise serializers.ValidationError("Invalid email or password.")
+
+        if not user.is_active:
+            raise serializers.ValidationError("User is inactive.")
+
         attrs["user"] = user
-        return attrs 
+        return attrs
+
 
 class BannerTemplateSerializer(serializers.ModelSerializer):
     class Meta:
@@ -49,4 +50,3 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         model = UserSubscription
         fields = ['id','user','username','email','subscription_type','start_date','end_date','status']
 
-    

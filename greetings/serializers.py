@@ -21,13 +21,14 @@ class GreetingTemplateSerializer(serializers.ModelSerializer):
     likes_count = serializers.SerializerMethodField()
     downloads_count = serializers.SerializerMethodField()
     is_liked = serializers.SerializerMethodField()
+    is_downloaded = serializers.SerializerMethodField()
 
     class Meta:
         model = GreetingTemplate
         fields = [
             'id', 'title', 'image', 'language', 'is_premium',
             'category', 'likes_count', 'downloads_count', 'is_liked',
-            'created_at', 'updated_at'
+            'created_at', 'updated_at','is_downloaded'
         ]
 
     def get_likes_count(self, obj):
@@ -40,6 +41,12 @@ class GreetingTemplateSerializer(serializers.ModelSerializer):
         user = self.context.get("request").user
         if user.is_authenticated:
             return obj.likes.filter(user=user).exists()
+        return False
+    
+    def get_is_downloaded(self, obj):
+        user = self.context.get("request").user
+        if user.is_authenticated:
+            return obj.downloads.filter(user=user).exists()
         return False
 
 

@@ -30,7 +30,6 @@ class AdminLoginView(APIView):
             user_data = {
                 "id": user.id,
                 "email": user.email,
-                "username": user.username,
                 "is_staff": user.is_staff,
                 "is_superuser": user.is_superuser,
                 "token": token.key,

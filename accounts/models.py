@@ -27,7 +27,8 @@ class CompanyDetails(AbstractBaseUser, PermissionsMixin):
     ]
 
     company_name = models.CharField(max_length=255)
-    email = models.EmailField(unique=True, db_index=True)  # required
+    username = None
+    email = models.EmailField(unique=True, db_index=True, primary_key=False)  # required
     password = models.CharField(max_length=128)  # required
     is_active = models.BooleanField(default=True)  # required
     last_login = models.DateTimeField(null=True, blank=True)  # optional

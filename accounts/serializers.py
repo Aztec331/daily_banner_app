@@ -8,7 +8,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CompanyDetails
-        fields = ['company_name', 'company_logo', 'business_category', 'phone_no',
+        fields = ['id','company_name', 'company_logo', 'business_category', 'phone_no',
                   'alternate_phone_no', 'email', 'company_website', 'company_address',
                   'password', 'confirm_password']
 
