@@ -31,6 +31,9 @@ urlpatterns = [
     path('api/token/', obtain_auth_token, name='api_token_auth'),
     path('auth/social/', include("dj_rest_auth.registration.urls")),
     path('auth/', include('dj_rest_auth.urls')),
+    path('api/', include('business_panel.urls')),
+    path('api/business-profile/', include('business_profile.urls')),
+    path('api/', include('transactions.urls')),
 ]
 
 if settings.DEBUG:
