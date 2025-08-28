@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Template, Banner
+from .models import Template, Banner, Font
 
 
 class TemplateSerializer(serializers.ModelSerializer):
@@ -13,3 +13,8 @@ class BannerSerializer(serializers.ModelSerializer):
         model = Banner
         fields = '__all__'
         read_only_fields = ['user', 'created_at']
+
+class FontSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Font
+        fields = ['id', 'name', 'category', 'language', 'url']
