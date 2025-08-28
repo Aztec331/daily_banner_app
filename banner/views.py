@@ -2,8 +2,8 @@ from rest_framework.permissions import IsAuthenticated,AllowAny
 from rest_framework import generics, permissions
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Template, Banner
-from .serializers import TemplateSerializer, BannerSerializer
+from .models import Template, Banner, Font
+from .serializers import TemplateSerializer, BannerSerializer, FontSerializer
 from django.http import FileResponse, Http404
 from rest_framework.views import APIView
 from django.conf import settings
@@ -90,4 +90,29 @@ class BannerDownloadView(APIView):
             as_attachment=True,
             filename=file_name
         )
+
+#------------------Font Views-------------------------------#
+
+class FontListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        category = request.query_params.get('category', 'all')
+        language = request.query_params.get('language', 'all')
+
+        fonts = Font.objects.all()
+        if category != 'all':
+            fonts = fonts.filter(category=category)
+        if language != 'all':
+            fonts = fonts.filter(language=language)
+
+        serializer = FontSerializer(fonts, many=True)
+        return Response(serializer.data)
+
+class FontCategoryView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        categories = [choice[0] for choice in Font.CATEGORY_CHOICES]
+        return Response(categories)
         

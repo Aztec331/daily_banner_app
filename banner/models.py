@@ -33,3 +33,26 @@ class Banner(models.Model):
 
     def __str__(self):
         return f"Banner #{self.id} by {self.user.email}"
+#-------------------------------------------------------------------
+#Font models
+class Font(models.Model):
+    CATEGORY_CHOICES = [
+        ('serif', 'Serif'),
+        ('sans-serif', 'Sans-Serif'),
+        ('display', 'Display'),
+        ('script', 'Script'),
+    ]
+
+    LANGUAGE_CHOICES = [
+        ('en', 'English'),
+        ('hi', 'Hindi'),
+        ('mr', 'Marathi'),
+    ]
+
+    name = models.CharField(max_length=100)
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
+    language = models.CharField(max_length=5, choices=LANGUAGE_CHOICES)
+    url = models.URLField()  # link to font file if needed
+
+    def __str__(self):
+        return self.name
