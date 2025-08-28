@@ -27,16 +27,18 @@ class CompanyDetails(AbstractBaseUser, PermissionsMixin):
     ]
 
     company_name = models.CharField(max_length=255)
-    company_logo = models.ImageField(upload_to='logos/', null=True, blank=True)
-    business_category = models.CharField(max_length=50, choices=BUSINESS_CATEGORY_CHOICES)
-    phone_no = models.CharField(max_length=15)
-    alternate_phone_no = models.CharField(max_length=15, null=True, blank=True)
-    email = models.EmailField(unique=True)
-    company_website = models.URLField(null=True, blank=True)
-    company_address = models.TextField()
-    is_active = models.BooleanField(default=True)
+    email = models.EmailField(unique=True, db_index=True)  # required
+    password = models.CharField(max_length=128)  # required
+    is_active = models.BooleanField(default=True)  # required
+    last_login = models.DateTimeField(null=True, blank=True)  # optional
     is_staff = models.BooleanField(default=False)
-
+    is_superuser = models.BooleanField(default=False)
+    phone_no = models.CharField(max_length=20)
+    alternate_phone_no = models.CharField(max_length=20, blank=True, null=True)
+    business_category = models.CharField(max_length=50, choices=BUSINESS_CATEGORY_CHOICES)
+    company_website = models.URLField(blank=True, null=True)
+    company_logo = models.ImageField(upload_to="logos/", blank=True, null=True)
+    company_address = models.TextField(blank=True, null=True)
     objects = CompanyManager()
 
     USERNAME_FIELD = 'email'
