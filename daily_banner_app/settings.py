@@ -180,8 +180,6 @@ USE_I18N = True
 USE_TZ = True
 
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None  # No username field
-ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_LOGIN_METHODS = {'email'}
 ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
 
