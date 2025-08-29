@@ -11,9 +11,13 @@ services:
     envVars:
       - key: DATABASE_URL
         fromDatabase:
-          name: daily-banner-db
+          name: daily_banner_app
           property: connectionString
       - key: SECRET_KEY
         value: django-insecure-q!q)1j=fziwav6ic%$=k3@9r+^=q3#p_s9pz@3n3e!s=y$h1yv
       - key: DJANGO_SETTINGS_MODULE
         value: daily_banner_app.settings
+
+databases:
+  - name: daily_banner_app
+    plan: free

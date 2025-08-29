@@ -1,5 +1,5 @@
 from django.db import models
-from accounts.models import CustomUser
+from accounts.models import CompanyDetails
 #from subscriptions.models import Subscription
 # Create your models here.
 
@@ -18,7 +18,7 @@ class BannerTemplate(models.Model):
         return self.title
     
 class UploadedMedia(models.Model):
-    uploaded_by = models.ForeignKey('accounts.CustomUser',on_delete=models.CASCADE)
+    uploaded_by = models.ForeignKey('accounts.CompanyDetails',on_delete=models.CASCADE)
     media_file = models.FileField(upload_to='media_files/')
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
@@ -27,7 +27,7 @@ class UploadedMedia(models.Model):
     
     
 class AdminActionLog(models.Model):
-    admin = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    admin = models.ForeignKey(CompanyDetails, on_delete=models.CASCADE)
     action = models.TextField()
     created_at = models.DateTimeField(auto_now_add= True)
 

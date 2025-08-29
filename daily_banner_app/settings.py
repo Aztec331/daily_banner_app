@@ -14,9 +14,14 @@ from pathlib import Path
 from corsheaders.defaults import default_headers
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+<<<<<<< HEAD
 BASE_DIR = Path(__file__).resolve().parent.parent
 AUTH_USER_MODEL= 'accounts.CustomUser'
+=======
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+>>>>>>> upstream/main
 
+#AUTH_USER_MODEL= 'accounts.CustomUser'
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
@@ -51,6 +56,11 @@ INSTALLED_APPS = [
     'django_extensions',
     'rest_framework',
     'rest_framework.authtoken',
+<<<<<<< HEAD
+=======
+    'accounts.apps.AccountsConfig',
+    'django.contrib.sites',
+>>>>>>> upstream/main
         
     #other apps
     'corsheaders',
@@ -59,6 +69,11 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+<<<<<<< HEAD
+=======
+    'allauth.socialaccount.providers.google',
+    #'dj-database-url',
+>>>>>>> upstream/main
 
     #external apps
     'accounts',
@@ -67,10 +82,20 @@ INSTALLED_APPS = [
     'banner',
     'mediafiles',
     'business_panel',
+<<<<<<< HEAD
     'business_profile',
     'transactions',
 ]
+=======
+    'greetings',
+]
+AUTH_USER_MODEL = 'accounts.CompanyDetails'
+>>>>>>> upstream/main
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -195,14 +220,14 @@ USE_I18N = True
 
 USE_TZ = True
 
-ACCOUNT_EMAIL_VERIFICATION = 'none'
-ACCOUNT_AUTHENTICATION_METHOD = 'username'
- 
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None  # No username field
+ACCOUNT_LOGIN_METHODS = {'email'}
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = 'static/' 
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 STATIC_ROOT= os.path.join(BASE_DIR, 'staticfiles')
 # Default primary key field type
@@ -218,4 +243,21 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
 
 RAZORPAY_KEY_ID = 'rzp_test_cB8TVykpqqbxSn'
 
+SOCIALACCOUNT_PROVIDERS = {
+        'google': {
+        #'APP': {
+         #   'client_id': "33936103700-7a6110ahctl234qb52g0eie6t32qv53j.apps.googleusercontent.com",
+          #  'secret': "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",}
+            
+        },
+        'SCOPE': ['profile','email',], # type: ignore
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+}
 
+GOOGLE_OAUTH_CLIENT_ID = os.getenv("33936103700-7a6110ahctl234qb52g0eie6t32qv53j.apps.googleusercontent.com")
+GOOGLE_OAUTH_CLIENT_SECRET = os.getenv("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")
+
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'

@@ -6,11 +6,13 @@ from .views import(
     TemplateCreateView,
     TemplateUpdateDeleteView,
     AdminMediaListView,
+    AdminLoginView,
 )
 
 
 urlpatterns = [
     #users
+    path("login/", AdminLoginView.as_view(), name="admin-login"),
     path('users/', AdminUserListView.as_view(), name ='admin-users'),
     path('user/<int:id>/', AdminUserDetailView.as_view(), name = 'admin-user-detail'),
     path('user/<int:id>/status/', AdminUserDetailView.as_view(), name='admin-user-status-update'),

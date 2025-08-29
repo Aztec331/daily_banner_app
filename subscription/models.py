@@ -1,5 +1,5 @@
 from django.db import models
-from accounts.models import CustomUser
+from accounts.models import CompanyDetails
 from django.utils import timezone
 from datetime import timedelta
 from django.contrib.auth import get_user_model
@@ -10,7 +10,6 @@ user = get_user_model()
 # Create your models here.
 class SubscriptionPlan(models.Model):
     PLAN_CHOICES = [
-        ('Free','Free'),
         ('Premium','Premium'),
     ]
     name = models.CharField(max_length=20, choices=PLAN_CHOICES, default='Free')
@@ -34,7 +33,7 @@ class SubPlan(models.Model):
         return f"{self.plan.name} - {self.name}"
     
 class UserSubscription(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    user = models.OneToOneField(CompanyDetails, on_delete=models.CASCADE)
     plan = models.ForeignKey(SubscriptionPlan, on_delete=models.SET_NULL, null=True)
     start_date = models.DateTimeField(auto_now_add=True)
     end_date = models.DateTimeField()
@@ -52,7 +51,7 @@ class UserSubscription(models.Model):
         return f"{self.user.username} - {self.plan.name if self.plan else 'No Plan'}"
     
 class SubscriptionHistory(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(CompanyDetails, on_delete=models.CASCADE)
     plan = models.ForeignKey(SubscriptionPlan, on_delete=models.CASCADE)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
@@ -63,7 +62,7 @@ class SubscriptionHistory(models.Model):
         return f"{self.user.username} - {self.plan.name} - {self.status}"
     
 class SubscriptionStatus(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    user = models.OneToOneField(CompanyDetails, on_delete=models.CASCADE)
     current_status = models.CharField(max_length=50)  # e.g., 'active', 'expired', 'cancelled'
     updated_on = models.DateTimeField(auto_now=True)
 

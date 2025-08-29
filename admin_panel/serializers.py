@@ -1,7 +1,35 @@
 from rest_framework import serializers
 from .models import BannerTemplate,UploadedMedia
 from subscription.models import UserSubscription
-from accounts.serializers import CustomUserSerializer
+from accounts.serializers import RegisterSerializer
+from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+class AdminLoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True)
+
+    def validate(self, attrs):
+        email = attrs.get("email")
+        password = attrs.get("password")
+
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            raise serializers.ValidationError("Invalid email or password.")
+
+        if not user.check_password(password):
+            raise serializers.ValidationError("Invalid email or password.")
+
+        if not user.is_active:
+            raise serializers.ValidationError("User is inactive.")
+
+        attrs["user"] = user
+        return attrs
+
 
 class BannerTemplateSerializer(serializers.ModelSerializer):
     class Meta:
@@ -16,10 +44,9 @@ class UploadedMediaSerializer(serializers.ModelSerializer):
         read_only_fields = ['id','uploaded_at', 'uploaded_by_username']
 
 class SubscriptionSerializer(serializers.ModelSerializer):
-    user = CustomUserSerializer(read_only=True)
+    user = RegisterSerializer(read_only=True)
 
     class Meta:
         model = UserSubscription
         fields = ['id','user','username','email','subscription_type','start_date','end_date','status']
 
-    
