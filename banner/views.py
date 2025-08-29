@@ -115,4 +115,3 @@ class FontCategoryView(APIView):
     def get(self, request):
         categories = [choice[0] for choice in Font.CATEGORY_CHOICES]
         return Response(categories)
-        
