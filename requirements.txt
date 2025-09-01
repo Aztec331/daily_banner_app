@@ -129,11 +129,11 @@ PyJWT==2.10.1
 pymongo==4.14.1
 PyMuPDF==1.26.3
 pyparsing==3.2.1
-PyQt5==5.15.9
-#pyqt5-plugins==5.15.9.2.3
-PyQt5-Qt5==5.15.2
-pyqt5-tools==5.15.9.3.3
-PyQt5_sip==12.16.1
+# PyQt5==5.15.9
+# #pyqt5-plugins==5.15.9.2.3
+# PyQt5-Qt5==5.15.2
+# pyqt5-tools==5.15.9.3.3
+# PyQt5_sip==12.16.1
 python-dateutil==2.9.0.post0
 python-decouple==3.8
 python-docx==1.2.0
