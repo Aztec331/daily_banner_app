@@ -10,16 +10,15 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 import os
+import dj_database_url
+from decouple import config
 from pathlib import Path
 from corsheaders.defaults import default_headers
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-<<<<<<< HEAD
-BASE_DIR = Path(__file__).resolve().parent.parent
-AUTH_USER_MODEL= 'accounts.CustomUser'
-=======
+#BASE_DIR = Path(__file__).resolve().parent.parent
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
->>>>>>> upstream/main
+
 
 #AUTH_USER_MODEL= 'accounts.CustomUser'
 # Quick-start development settings - unsuitable for production
@@ -56,11 +55,8 @@ INSTALLED_APPS = [
     'django_extensions',
     'rest_framework',
     'rest_framework.authtoken',
-<<<<<<< HEAD
-=======
     'accounts.apps.AccountsConfig',
     'django.contrib.sites',
->>>>>>> upstream/main
         
     #other apps
     'corsheaders',
@@ -69,28 +65,24 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-<<<<<<< HEAD
-=======
     'allauth.socialaccount.providers.google',
     #'dj-database-url',
->>>>>>> upstream/main
+
 
     #external apps
-    'accounts',
+    #'accounts',
     'subscription',
     'admin_panel',
     'banner',
-    'mediafiles',
+    'mediafiles',    
     'business_panel',
-<<<<<<< HEAD
     'business_profile',
     'transactions',
-]
-=======
     'greetings',
+    'dashboard',
 ]
+
 AUTH_USER_MODEL = 'accounts.CompanyDetails'
->>>>>>> upstream/main
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
@@ -137,21 +129,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR , 'media')
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'daily_banner_db',
-        'USER':'banner_user',
-        'PASSWORD': 'DailyBannerApp01',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
-}
-
-
-=======
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
@@ -167,29 +144,29 @@ DATABASES = {
 # }
 
 
-# DATABASES = {
-#     'default': dj_database_url.config(
-#         default=config('DATABASE_URL',cast=str, default='sqlite:///daily_banner_app.db'),
-#     )
-# }
-=======
->>>>>>> d63b02d (Added business and transaction API changes)
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'daily_banner_db',
-        'USER':'banner_user',
-        'PASSWORD': 'DailyBannerApp01',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
+    'default': dj_database_url.config(
+        default=config('DATABASE_URL',cast=str, default='sqlite:///daily_banner_app.db'),
+    )
 }
+# =======
+# >>>>>>> d63b02d (Added business and transaction API changes)
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'daily_banner_db',
+#         'USER':'banner_user',
+#         'PASSWORD': 'DailyBannerApp01',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
 
-<<<<<<< HEAD
->>>>>>> 0bcd095 (Ready for Render deployment with migrations)
-=======
+# <<<<<<< HEAD
+# >>>>>>> 0bcd095 (Ready for Render deployment with migrations)
+# =======
 
->>>>>>> d63b02d (Added business and transaction API changes)
+# >>>>>>> d63b02d (Added business and transaction API changes)
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
