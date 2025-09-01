@@ -29,15 +29,20 @@ class TemplateDetailView(generics.RetrieveAPIView):
     serializer_class = TemplateSerializer
     permission_classes = [permissions.AllowAny]
 
+class TemplateLanguagesView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        # List of template languages
+        languages = [
+            {"code": "en", "name": "English"},
+            {"code": "hi", "name": "Hindi"},
+            {"code": "mr", "name": "Marathi"},
+        ]
+        return Response({"languages": languages})
+
 
 # ------------------ BANNER VIEWS ------------------ #
-
-class BannerCreateView(generics.CreateAPIView):
-    serializer_class = BannerSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
 
 
 class BannerUpdateView(generics.UpdateAPIView):

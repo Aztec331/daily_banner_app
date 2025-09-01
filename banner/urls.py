@@ -7,9 +7,9 @@ urlpatterns = [
     # Templates
     path('templates/', views.TemplateListView.as_view(), name='template-list'),
     path('templates/<int:pk>/', views.TemplateDetailView.as_view(), name='template-detail'),
+    path('templates/languages/', views.TemplateLanguagesView.as_view(), name='template-languages'),
 
     # Banners
-    path('banner/create/', views.BannerCreateView.as_view(), name='banner-create'),
     path('banner/<int:pk>/update/', views.BannerUpdateView.as_view(), name='banner-update'),
     path('banner/mine/', views.MyBannersListView.as_view(), name='banner-mine'),
     path('banner/<int:pk>/', views.BannerDetailView.as_view(), name='banner-detail'),
