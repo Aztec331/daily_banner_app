@@ -1,4 +1,4 @@
-#Python cache
+echo "#Python cache
 __pycache__/
 *.py[cod]
 *.pyc
@@ -26,3 +26,5 @@ db.sqlite3
 
 #Logs
 *.log
+" > .gitignore
+	
