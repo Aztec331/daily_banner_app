@@ -1,16 +1,20 @@
-from rest_framework import viewsets, permissions
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from .models import BusinessProfile
 from .serializers import BusinessProfileSerializer
 
-class BusinessProfileViewSet(viewsets.ModelViewSet):
-    queryset = BusinessProfile.objects.all()
-    serializer_class = BusinessProfileSerializer
-    permission_classes = [permissions.IsAuthenticated]
+class BusinessProfileView(APIView):
+    permission_classes = [IsAuthenticated]
 
-    def get_queryset(self):
-        """Only return profiles for the logged-in user"""
-        return BusinessProfile.objects.filter(user=self.request.user)
+    def get(self, request):
+        profile, _ = BusinessProfile.objects.get_or_create(user=request.user)
+        serializer = BusinessProfileSerializer(profile)
+        return Response(serializer.data)
 
-    def perform_create(self, serializer):
-        """Auto-assign the logged-in user"""
-        serializer.save(user=self.request.user)
+    def put(self, request):
+        profile, _ = BusinessProfile.objects.get_or_create(user=request.user)
+        serializer = BusinessProfileSerializer(profile, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)

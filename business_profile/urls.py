@@ -1,10 +1,6 @@
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-from .views import BusinessProfileViewSet
-
-router = DefaultRouter()
-router.register(r'business-profiles', BusinessProfileViewSet, basename='businessprofile')
+from django.urls import path
+from .views import BusinessProfileView
 
 urlpatterns = [
-    path('', include(router.urls)),  # no extra "api/business-profile/"
+    path('business-profile/', BusinessProfileView.as_view()),
 ]

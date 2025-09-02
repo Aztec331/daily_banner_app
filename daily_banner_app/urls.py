@@ -32,7 +32,7 @@ urlpatterns = [
     path('auth/', include('dj_rest_auth.urls')),
     path('api/', include('business_panel.urls')),
     path('api/auth/google/', include('allauth.urls')),
-    path('api/business-profile/', include('business_profile.urls')),
+    path('api/', include('business_profile.urls')),
     path('api/', include('transactions.urls')),
     path('accounts/', include('allauth.urls')),
     path('api/', include('greetings.urls')),
