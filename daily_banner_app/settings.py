@@ -145,8 +145,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR , 'media')
 
 
 DATABASES = {
-    'default': dj_database_url.config(
-        default=config('DATABASE_URL', cast=str, default='sqlite:///daily_banner_app.db'),
+    "default": dj_database_url.parse(
+        "postgres://daily_banner_app_user:ISNQtyeICuB8oa0gw9bNQBqCSvwQIHst@dpg-d2e4kaggjchc73e13om0-a.oregon-postgres.render.com/daily_banner_app",
         conn_max_age=600,
         ssl_require=True
     )
