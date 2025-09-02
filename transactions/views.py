@@ -7,8 +7,10 @@ from .serializers import TransactionSerializer
 class TransactionViewSet(viewsets.ModelViewSet):
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
+    permission_classes = [permissions.IsAuthenticated]  # optional, if you want auth
 
     def perform_create(self, serializer):
+        """Auto-assign the logged-in user"""
         serializer.save(user=self.request.user)
 
     # GET /api/transactions/{id}/receipt/

@@ -1,8 +1,12 @@
-# transactions/urls.py
-from rest_framework.routers import DefaultRouter
+from django.urls import path
 from .views import TransactionViewSet
 
-router = DefaultRouter()
-router.register(r'transactions', TransactionViewSet, basename='transaction')
+transaction_list = TransactionViewSet.as_view({'get': 'list'})
+transaction_detail = TransactionViewSet.as_view({'get': 'retrieve'})
+transaction_receipt = TransactionViewSet.as_view({'get': 'receipt'})
 
-urlpatterns = router.urls
+urlpatterns = [
+    path('transactions/', transaction_list, name='transaction-list'),
+    path('transactions/<int:pk>/', transaction_detail, name='transaction-detail'),
+    path('transactions/<int:pk>/receipt/', transaction_receipt, name='transaction-receipt'),
+]
