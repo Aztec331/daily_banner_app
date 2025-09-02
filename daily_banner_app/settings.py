@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-q!q)1j=fziwav6ic%$=k3@9r+^=q3#p_s9pz@3n3e!s=y$h1yv
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost','127.0.0.1']
+ALLOWED_HOSTS = ['localhost','127.0.0.1','.onrender.com']
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -149,24 +149,7 @@ DATABASES = {
         default=config('DATABASE_URL',cast=str, default='sqlite:///daily_banner_app.db'),
     )
 }
-# =======
-# >>>>>>> d63b02d (Added business and transaction API changes)
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'daily_banner_db',
-#         'USER':'banner_user',
-#         'PASSWORD': 'DailyBannerApp01',
-#         'HOST': 'localhost',
-#         'PORT': '5432',
-#     }
-# }
 
-# <<<<<<< HEAD
-# >>>>>>> 0bcd095 (Ready for Render deployment with migrations)
-# =======
-
-# >>>>>>> d63b02d (Added business and transaction API changes)
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
