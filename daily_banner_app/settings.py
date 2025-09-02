@@ -146,7 +146,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR , 'media')
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=config('DATABASE_URL',cast=str, default='sqlite:///daily_banner_app.db'),
+        default=config('DATABASE_URL', cast=str, default='sqlite:///daily_banner_app.db'),
+        conn_max_age=600,
+        ssl_require=True
     )
 }
 
