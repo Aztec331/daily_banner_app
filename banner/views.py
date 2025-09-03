@@ -1,9 +1,11 @@
 from rest_framework.permissions import IsAuthenticated,AllowAny
 from rest_framework import generics, permissions
+from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Template, Banner, Font
-from .serializers import TemplateSerializer, BannerSerializer, FontSerializer
+from .serializers import TemplateSerializer, BannerSerializer, FontSerializer, BannerCreateSerializer, BannerUpdateSerializer
+from .pagination import BannerPagination
 from django.http import FileResponse, Http404
 from rest_framework.views import APIView
 from django.conf import settings
@@ -44,22 +46,40 @@ class TemplateLanguagesView(APIView):
 
 # ------------------ BANNER VIEWS ------------------ #
 
+class BannerCreateView(APIView):
+    permission_classes = [IsAuthenticated]
 
-class BannerUpdateView(generics.UpdateAPIView):
-    queryset = Banner.objects.all()
+    def post(self, request):
+        serializer = BannerCreateSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            banner = serializer.save()
+            return Response({
+                "message": "Banner created successfully",
+                "bannerId": banner.id,
+                "templateId": banner.template.id,
+                "title": banner.custom_name,
+                "text_content": banner.text_content,
+                "custom_image": banner.custom_image,
+                "language": banner.language
+            }, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+#Banner update view
+class UserBannersView(ListAPIView):
     serializer_class = BannerSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
+    pagination_class = BannerPagination
 
     def get_queryset(self):
-        return Banner.objects.filter(user=self.request.user)
+        user = self.request.user
+        status_param = self.request.query_params.get('status', 'all')
 
+        queryset = Banner.objects.filter(user=user)
 
-class MyBannersListView(generics.ListAPIView):
-    serializer_class = BannerSerializer
-    permission_classes = [permissions.IsAuthenticated]
+        if status_param != 'all':
+            queryset = queryset.filter(status=status_param)
 
-    def get_queryset(self):
-        return Banner.objects.filter(user=self.request.user)
+        return queryset.order_by('-created_at')
 
 
 class BannerDetailView(generics.RetrieveAPIView):
@@ -74,6 +94,15 @@ class BannerDeleteView(generics.DestroyAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
+        return Banner.objects.filter(user=self.request.user)
+
+class BannerUpdateView(generics.UpdateAPIView):
+    queryset = Banner.objects.all()
+    serializer_class = BannerUpdateSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        # User can update only their own banners
         return Banner.objects.filter(user=self.request.user)
 
 class BannerDownloadView(APIView):
@@ -120,3 +149,7 @@ class FontCategoryView(APIView):
     def get(self, request):
         categories = [choice[0] for choice in Font.CATEGORY_CHOICES]
         return Response(categories)
+
+
+# ------------------ USER BANNERS VIEW WITH STATUS FILTER & PAGINATION ------------------ #
+

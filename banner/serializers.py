@@ -7,12 +7,52 @@ class TemplateSerializer(serializers.ModelSerializer):
         model = Template
         fields = '__all__'
 
-
+#Banner serializer to get all banners according to model name/fields
 class BannerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Banner
         fields = '__all__'
         read_only_fields = ['user', 'created_at']
+
+#Banner serializer to create a banner according to our custom name/fields
+class BannerCreateSerializer(serializers.ModelSerializer):
+    templateId = serializers.PrimaryKeyRelatedField(
+        queryset=Template.objects.all(), source='template', write_only=True
+    )
+    title = serializers.CharField(source='custom_name')
+    customizations = serializers.DictField(child=serializers.CharField(), required=False)
+    
+    class Meta:
+        model = Banner
+        fields = ['templateId', 'title', 'description', 'customizations', 'language']
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        customizations = validated_data.pop('customizations', {})
+
+        banner = Banner.objects.create(
+            user=user,
+            template=validated_data['template'],
+            custom_name=validated_data['custom_name'],
+            description=validated_data.get('description', ''),
+            text_content=customizations.get('text', ''),
+            custom_image=customizations.get('image', ''),
+            language=validated_data.get('language', 'en')
+        )
+        return banner
+
+class BannerUpdateSerializer(serializers.ModelSerializer):
+    title = serializers.CharField(source='custom_name')
+
+    class Meta:
+        model = Banner
+        fields = ['title', 'description']
+
+    def update(self, instance, validated_data):
+        instance.custom_name = validated_data.get('custom_name', instance.custom_name)
+        instance.description = validated_data.get('description', instance.description)
+        instance.save()
+        return instance
 
 class FontSerializer(serializers.ModelSerializer):
     class Meta:

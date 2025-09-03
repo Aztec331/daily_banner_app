@@ -20,19 +20,41 @@ class Template(models.Model):
     def __str__(self):
         return f"{self.title} ({self.category})"
 
-
+#------------------------------------------------------------------------------------------------------------------------
+#Banner models
 class Banner(models.Model):
+    STATUS_CHOICES = [
+        ('draft', 'Draft'),
+        ('published', 'Published'),
+        ('archived', 'Archived'),
+    ]
+
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    template = models.ForeignKey(Template, on_delete=models.SET_NULL, null=True, blank=True, related_name='banners')
-    banner_image = models.ImageField(upload_to='banners/')  # or use ImageField
-    text_content = models.TextField(blank=True, null=True)
-    custom_name = models.CharField(max_length=100, blank=True, null=True)
-    custom_logo = models.ImageField(upload_to='logos/',blank=True,null=True)  # or ImageField
-    custom_photo = models.ImageField(upload_to='photos/',blank=True, null=True)  # or ImageField
+    template = models.ForeignKey(
+        Template, on_delete=models.SET_NULL, null=True, blank=True, related_name='banners'
+    )
+
+    custom_name = models.CharField(max_length=100)  # Banner Title
+    description = models.TextField(blank=True, null=True)  # Banner Description
+    text_content = models.TextField(blank=True, null=True)  # customizations.text
+    custom_image = models.URLField(blank=True, null=True)  # customizations.image
+    language = models.CharField(
+        max_length=5,
+        choices=[('en', 'English'), ('hi', 'Hindi'), ('mr', 'Marathi')],
+        default='en'
+    )
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='draft'
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"Banner #{self.id} by {self.user.email}"
+        return f"Banner #{self.id} - {self.custom_name} by {self.user.email}"
+
 #-------------------------------------------------------------------
 #Font models
 class Font(models.Model):
