@@ -31,7 +31,7 @@ class LoginView(APIView):
                 "company_name": user.company_name,
                 "company_address": user.company_address,
                 "phone": user.phone_no,
-                "get_number": user.phone_no,
+                #"get_number": user.phone_no,
                 "token": token.key
             }
 
