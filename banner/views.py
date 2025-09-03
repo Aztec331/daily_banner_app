@@ -64,7 +64,7 @@ class BannerCreateView(APIView):
             }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-#Banner update view
+#Get all banners of a user with pagination
 class UserBannersView(ListAPIView):
     serializer_class = BannerSerializer
     permission_classes = [IsAuthenticated]
@@ -81,19 +81,19 @@ class UserBannersView(ListAPIView):
 
         return queryset.order_by('-created_at')
 
-
-class BannerDetailView(generics.RetrieveAPIView):
+class BannerDetailView(generics.RetrieveDestroyAPIView):
+    """
+    Handles:
+    - GET    /api/banners/{id}/     → Get banner details by id
+    - DELETE /api/banners/{id}/     → Delete banner by id
+    """
     queryset = Banner.objects.all()
     serializer_class = BannerSerializer
     permission_classes = [permissions.IsAuthenticated]
-
-
-class BannerDeleteView(generics.DestroyAPIView):
-    queryset = Banner.objects.all()
-    serializer_class = BannerSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    lookup_field = 'id'
 
     def get_queryset(self):
+        # Only allow banners of the logged-in user
         return Banner.objects.filter(user=self.request.user)
 
 class BannerUpdateView(generics.UpdateAPIView):
@@ -104,6 +104,50 @@ class BannerUpdateView(generics.UpdateAPIView):
     def get_queryset(self):
         # User can update only their own banners
         return Banner.objects.filter(user=self.request.user)
+
+class PublishBannerAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, id):
+        try:
+            banner = Banner.objects.get(id=id, user=request.user)
+        except Banner.DoesNotExist:
+            return Response({"detail": "Banner not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        if banner.status == 'published':
+            return Response({"detail": "Banner is already published."}, status=status.HTTP_400_BAD_REQUEST)
+
+        banner.status = 'published'
+        banner.save()
+
+        return Response({
+            "id": banner.id,
+            "custom_name": banner.custom_name,
+            "status": banner.status,
+            "message": "Banner has been published successfully."
+        }, status=status.HTTP_200_OK)
+
+class ArchiveBannerAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, id):
+        try:
+            banner = Banner.objects.get(id=id, user=request.user)
+        except Banner.DoesNotExist:
+            return Response({"detail": "Banner not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        if banner.status == 'archived':
+            return Response({"detail": "Banner is already archived."}, status=status.HTTP_400_BAD_REQUEST)
+
+        banner.status = 'archived'
+        banner.save()
+
+        return Response({
+            "id": banner.id,
+            "custom_name": banner.custom_name,
+            "status": banner.status,
+            "message": "Banner has been archived successfully."
+        }, status=status.HTTP_200_OK)
 
 class BannerDownloadView(APIView):
     permission_classes= [IsAuthenticated]
@@ -151,5 +195,4 @@ class FontCategoryView(APIView):
         return Response(categories)
 
 
-# ------------------ USER BANNERS VIEW WITH STATUS FILTER & PAGINATION ------------------ #
 
