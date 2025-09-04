@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions, generics
-from .models import SubscriptionPlan, UserSubscription, SubscriptionHistory, SubscriptionRenew
+from .models import SubscriptionPlan, UserSubscription, SubscriptionHistory, SubscriptionRenew, SubPlan
 from .serializers import (
     SubscriptionPlanSerializer,
     UserSubscriptionSerializer,
@@ -32,41 +32,36 @@ class SubscribeView(APIView):
     def post(self, request):
         serializer = SubscribeRequestSerializer(data=request.data)
         if serializer.is_valid():
-            plan_id = serializer.validated_data['plan_id']
             try:
-                plan = SubscriptionPlan.objects.get(id=plan_id)
-                amount_paise = int(plan.price * 100)
+                subplan_id = serializer.validated_data['subplan_id']
+                subplan = SubPlan.objects.get(id=subplan_id)
 
-                # Step 1: Create Razorpay order
-                razorpay_order = razorpay_client.order.create({
-                    "amount": amount_paise,
-                    "currency": "INR",
-                    "payment_capture": "1"
-                })
-
-                # Optional: Save order ID temporarily in your database
-                # e.g., create a pending UserSubscription with order_id
+                # Save pending subscription (no Razorpay SDK call)
                 UserSubscription.objects.update_or_create(
                     user=request.user,
                     defaults={
-                        'plan': plan,
+                        'plan': subplan.plan,
                         'is_active': False,
-                        'order_id': razorpay_order['id'],  # Add this field in model
+                        'start_date': timezone.now(),
+                        'end_date': timezone.now() + timedelta(days=subplan.duration_in_days)
                     }
                 )
 
+                # Send details back to frontend to proceed with Razorpay Checkout
                 return Response({
-                    "order_id": razorpay_order['id'],
-                    "amount": amount_paise,
+                    "amount": int(subplan.price * 100),
                     "currency": "INR",
-                    "plan_name": plan.name,
-                    "key_id": settings.RAZORPAY_KEY_ID,
-                    "callback_url": "/api/payment/success/"  # for frontend redirection
+                    "plan_name": subplan.plan.name,
+                    "subplan_name": subplan.name,
+                    "key_id": settings.RAZORPAY_KEY_ID,  # only key_id
                 }, status=status.HTTP_200_OK)
 
-            except SubscriptionPlan.DoesNotExist:
-                return Response({"error": "Plan not found."}, status=status.HTTP_404_NOT_FOUND)
+            except SubPlan.DoesNotExist:
+                return Response({"error": "SubPlan not found."}, status=status.HTTP_404_NOT_FOUND)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 
 class PaymentSuccessView(APIView):

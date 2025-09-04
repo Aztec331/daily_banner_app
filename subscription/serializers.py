@@ -22,6 +22,8 @@ class UserSubscriptionSerializer(serializers.ModelSerializer):
 
 class SubscribeRequestSerializer(serializers.Serializer):
     plan_id = serializers.IntegerField()
+    subplan_id = serializers.IntegerField()
+    
 
 class SubscriptionStatusSerializer(serializers.ModelSerializer):
     class Meta:

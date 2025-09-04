@@ -31,14 +31,13 @@ class LoginView(APIView):
                 "company_name": user.company_name,
                 "company_address": user.company_address,
                 "phone": user.phone_no,
-                "get_number": user.phone_no,
+                #"get_number": user.phone_no,
                 "token": token.key
             }
 
             return Response(user_data, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 class ProfileView(generics.RetrieveUpdateAPIView):
     serializer_class = ProfileSerializer

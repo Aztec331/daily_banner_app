@@ -9,14 +9,16 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
+import os
 import dj_database_url
 from decouple import config
-import os
 from pathlib import Path
 from corsheaders.defaults import default_headers
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+#BASE_DIR = Path(__file__).resolve().parent.parent
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 
 #AUTH_USER_MODEL= 'accounts.CustomUser'
 # Quick-start development settings - unsuitable for production
@@ -28,7 +30,7 @@ SECRET_KEY = 'django-insecure-q!q)1j=fziwav6ic%$=k3@9r+^=q3#p_s9pz@3n3e!s=y$h1yv
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['localhost','127.0.0.1','.onrender.com']
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -50,6 +52,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    #'django_extensions',
     'rest_framework',
     'rest_framework.authtoken',
     'accounts.apps.AccountsConfig',
@@ -65,15 +68,20 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     #'dj-database-url',
 
+
     #external apps
     #'accounts',
     'subscription',
     'admin_panel',
     'banner',
-    'mediafiles',
+    'mediafiles',    
     'business_panel',
+    'business_profile',
+    'transactions',
     'greetings',
+    'dashboard',
 ]
+
 AUTH_USER_MODEL = 'accounts.CompanyDetails'
 
 AUTHENTICATION_BACKENDS = [
@@ -136,11 +144,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR , 'media')
 # }
 
 
-# DATABASES = {
-#     'default': dj_database_url.config(
-#         default=config('DATABASE_URL',cast=str, default='sqlite:///daily_banner_app.db'),
-#     )
-# }
 DATABASES = {
     "default": dj_database_url.parse(
         "postgres://daily_banner_app_user:ISNQtyeICuB8oa0gw9bNQBqCSvwQIHst@dpg-d2e4kaggjchc73e13om0-a.oregon-postgres.render.com/daily_banner_app",
@@ -196,9 +199,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_ALL_ORIGINS = True
 
-# CORS_ALLOW_HEADERS = list(default_headers) + [
-#     'authorization',
-# ]
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'authorization',
+]
 
 RAZORPAY_KEY_ID = 'rzp_test_cB8TVykpqqbxSn'
 
