@@ -6,10 +6,11 @@ from rest_framework import status
 from .models import Template, Banner, Font
 from .serializers import TemplateSerializer, BannerSerializer, FontSerializer, BannerCreateSerializer, BannerUpdateSerializer
 from .pagination import BannerPagination
-from django.http import FileResponse, Http404
 from rest_framework.views import APIView
-from django.conf import settings
-import os
+import io
+import requests
+from PIL import Image, ImageDraw
+from django.http import HttpResponse, Http404
 
 # ------------------ TEMPLATE VIEWS ------------------ #
 
@@ -150,25 +151,48 @@ class ArchiveBannerAPIView(APIView):
         }, status=status.HTTP_200_OK)
 
 
-class BannerDownloadView(APIView):
-    permission_classes= [IsAuthenticated]
-    def get(self, request, pk):
-        try:
-            banner = Banner.objects.get(pk=pk)
-        except Banner.DoesNotExist:
-            raise Http404("Banner not found")
-        
-        if not banner.banner_image:
-            raise Http404("No file available for this banner")
-        
-        file_path = banner.banner_image.path
-        file_name = os.path.basename(file_path)
+class ExportBannerAPIView(APIView):
+    permission_classes = [IsAuthenticated]
 
-        return FileResponse(
-            open(file_path, 'rb'),
-            as_attachment=True,
-            filename=file_name
-        )
+    def get(self, request, id):
+        quality = int(request.query_params.get("quality", 90))
+
+        try:
+            banner = Banner.objects.get(id=id)
+        except Banner.DoesNotExist:
+            return Response({"detail": "Banner not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Default white canvas
+        img = Image.new("RGB", (800, 400), color=(255, 255, 255))
+
+        # If banner has an image URL, fetch it
+        if banner.custom_image:
+            try:
+                r = requests.get(banner.custom_image, stream=True, timeout=5)
+                if r.status_code == 200:
+                    img = Image.open(io.BytesIO(r.content)).convert("RGB")
+            except Exception:
+                pass  # fallback to white canvas if URL fails
+
+        # Draw banner text
+        draw = ImageDraw.Draw(img)
+        text = banner.text_content or banner.custom_name
+        draw.text((50, 50), text, fill=(0, 0, 0))
+
+        # Save as PNG
+        buffer = io.BytesIO()
+        img.save(buffer, format="PNG", quality=quality)
+        buffer.seek(0)
+
+        response = HttpResponse(buffer, content_type="image/png")
+        response["Content-Disposition"] = f'attachment; filename="banner_{banner.id}.png"'
+        return response
+
+
+ 
+
+
+
 
 #------------------Font Views-------------------------------#
 
