@@ -13,7 +13,7 @@ class SubscriptionPlan(models.Model):
         ('Premium','Premium'),
     ]
     name = models.CharField(max_length=20, choices=PLAN_CHOICES, default='Free')
-
+    price = models.FloatField()
     def __str__(self):
         return self.name
 
