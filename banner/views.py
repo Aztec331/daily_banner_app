@@ -149,6 +149,7 @@ class ArchiveBannerAPIView(APIView):
             "message": "Banner has been archived successfully."
         }, status=status.HTTP_200_OK)
 
+
 class BannerDownloadView(APIView):
     permission_classes= [IsAuthenticated]
     def get(self, request, pk):
