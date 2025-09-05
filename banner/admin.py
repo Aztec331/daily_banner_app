@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Banner
+from .models import Banner, Template, Font
 
 @admin.register(Banner)
 class BannerAdmin(admin.ModelAdmin):
