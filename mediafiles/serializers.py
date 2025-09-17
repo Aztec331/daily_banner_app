@@ -39,3 +39,50 @@ class MediaUploadSerializer(serializers.ModelSerializer):
         validated_data['size'] = file.size
         validated_data['user'] = self.context['request'].user
         return super().create(validated_data)
+
+
+#-------VIDEO PROCESSING-------------------------------------#
+class PositionSerializer(serializers.Serializer):
+    x = serializers.FloatField()
+    y = serializers.FloatField()
+
+
+class SizeSerializer(serializers.Serializer):
+    width = serializers.IntegerField()
+    height = serializers.IntegerField()
+
+
+class LayerSerializer(serializers.Serializer):
+    type = serializers.ChoiceField(choices=['text', 'image', 'shape'])
+    text = serializers.CharField(required=False, allow_blank=True)
+    font = serializers.CharField(required=False, allow_blank=True)
+    color = serializers.CharField(required=False, allow_blank=True)
+    position = PositionSerializer()
+    size = SizeSerializer()
+    opacity = serializers.FloatField(required=False, default=1.0)
+    shapeType = serializers.CharField(required=False, allow_blank=True)
+    imageUri = serializers.URLField(required=False, allow_blank=True)
+
+
+class CanvasSerializer(serializers.Serializer):
+    videoUri = serializers.URLField()
+    layers = LayerSerializer(many=True)
+    canvasSize = SizeSerializer()
+    duration = serializers.FloatField()
+
+
+class OptionsSerializer(serializers.Serializer):
+    outputFormat = serializers.ChoiceField(choices=['mp4', 'mov', 'avi'])
+    quality = serializers.ChoiceField(choices=['low', 'medium', 'high', 'ultra'])
+    resolution = SizeSerializer()
+
+
+class UserSerializer(serializers.Serializer):
+    userId = serializers.CharField()
+    sessionId = serializers.CharField()
+
+
+class VideoProcessRequestSerializer(serializers.Serializer):
+    canvas = CanvasSerializer()
+    options = OptionsSerializer()
+    user = UserSerializer()

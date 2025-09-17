@@ -2,11 +2,13 @@ from rest_framework import generics, status, permissions
 from rest_framework.response import Response
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from .models import Media
-from .serializers import MediaSerializer, MediaUploadSerializer
+from .serializers import MediaSerializer, MediaUploadSerializer, VideoProcessRequestSerializer
 from .pagination import MediaPagination
 from django.db.models import Q
 from rest_framework.views import APIView
 from django.db.models import Count, Sum
+import uuid, time
+
 
 #Get all media with pagination
 class MediaListView(generics.ListAPIView):
@@ -109,4 +111,49 @@ class MediaStatsView(APIView):
             "total_size_bytes": total_size,
             "total_size_mb": round(total_size / (1024 * 1024), 2)
         })
-    
+
+
+class VideoProcessView(APIView):
+    def post(self, request):
+        serializer = VideoProcessRequestSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+
+        # ===== Simulate processing (replace with your FFmpeg/cloud logic) =====
+        start_time = time.time()
+        layers_processed = len(data['canvas']['layers'])
+        enhancements_applied = ["color_correction", "noise_reduction", "sharpening", "stabilization"]
+        processing_time = round(time.time() - start_time, 2)
+
+        video_id = str(uuid.uuid4())
+        video_url = f"https://your-cloud-storage.com/{video_id}.mp4"
+
+        response_data = {
+            "success": True,
+            "data": {
+                "videoUrl": video_url,
+                "videoId": video_id,
+                "metadata": {
+                    "duration": data['canvas']['duration'],
+                    "fileSize": 15728640,  # example size in bytes
+                    "resolution": {
+                        "width": data['options']['resolution']['width'],
+                        "height": data['options']['resolution']['height']
+                    },
+                    "format": data['options']['outputFormat'],
+                    "quality": data['options']['quality']
+                },
+                "processing": {
+                    "processingTime": processing_time,
+                    "layersProcessed": layers_processed,
+                    "enhancementsApplied": enhancements_applied
+                },
+                "download": {
+                    "directUrl": video_url,
+                    "expiresAt": "2025-12-31T23:59:59Z",
+                    "maxDownloads": 100
+                }
+            }
+        }
+
+        return Response(response_data, status=status.HTTP_200_OK)

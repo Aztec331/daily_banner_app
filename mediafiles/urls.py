@@ -5,7 +5,8 @@ from .views import (
     MediaRetrieveDeleteView,
     MediaByTypeView,
     MediaSearchView,
-    MediaStatsView
+    MediaStatsView,
+    VideoProcessView
 )
 
 urlpatterns = [
@@ -15,4 +16,5 @@ urlpatterns = [
     path("media/type/<str:type>/", MediaByTypeView.as_view(), name="media-by-type"),
     path('media/search/', MediaSearchView.as_view(), name='media-search'),
     path('media/stats/', MediaStatsView.as_view(), name='media-stats'),
+    path('video/process/', VideoProcessView.as_view(), name='video-process'),
 ]

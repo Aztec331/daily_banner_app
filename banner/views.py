@@ -3,14 +3,16 @@ from rest_framework import generics, permissions
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Template, Banner, Font
-from .serializers import TemplateSerializer, BannerSerializer, FontSerializer, BannerCreateSerializer, BannerUpdateSerializer
+from .models import Template, TemplateLike, Banner, Font, TemplateDownload
+from .serializers import TemplateSerializer, BannerSerializer, FontSerializer, BannerCreateSerializer, BannerUpdateSerializer, TemplateDownloadSerializer
 from .pagination import BannerPagination
 from rest_framework.views import APIView
 import io
 import requests
 from PIL import Image, ImageDraw
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, FileResponse
+from django.shortcuts import get_object_or_404
+import os
 
 # ------------------ TEMPLATE VIEWS ------------------ #
 
@@ -45,7 +47,72 @@ class TemplateLanguagesView(APIView):
         return Response({"languages": languages})
 
 
-# ------------------ BANNER VIEWS ------------------ #
+class TemplateLikeView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, id):
+        template = get_object_or_404(Template, id=id)
+
+        like, created = TemplateLike.objects.get_or_create(user=request.user, template=template)
+
+        #check only if created==true
+        if not created:
+            # already liked → unlike
+            like.delete()
+            return Response({"message": "Template unliked"})
+        
+        return Response({"message": "Template liked"})
+
+class TemplateDownloadView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, id):
+        template = get_object_or_404(Template, id=id)
+
+        if not template.template_image:
+            raise Http404("Template file not found")
+
+        file_path = template.template_image.path
+        if not os.path.exists(file_path):
+            raise Http404("File does not exist on server")
+
+        # --- Log the download ---
+        TemplateDownload.objects.get_or_create(user=request.user, template=template)
+
+        # --- Send file ---
+        response = FileResponse(
+            open(file_path, 'rb'),
+            as_attachment=True,
+            filename=os.path.basename(file_path)
+        )
+        return response
+
+class TemplateCategoriesView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        categories = [choice[0] for choice in Template.CATEGORY_CHOICES]
+        return Response({
+            "categories": categories
+        })
+
+
+class TemplateAnalyticsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, id):
+        template = get_object_or_404(Template, id=id)
+        likes_count = template.likes.count()
+        downloads_count = template.downloads.count()
+        return Response({
+            "template_id": template.id,
+            "title": template.title,
+            "likes_count": likes_count,
+            "downloads_count": downloads_count
+        })
+
+
+# -------------------- BANNER VIEWS ------------------ #
 
 class BannerCreateView(APIView):
     permission_classes = [IsAuthenticated]

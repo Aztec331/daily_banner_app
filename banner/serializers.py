@@ -7,6 +7,26 @@ class TemplateSerializer(serializers.ModelSerializer):
         model = Template
         fields = '__all__'
 
+ 
+
+#Template download info serializer 
+class TemplateDownloadSerializer(serializers.ModelSerializer):
+    downloads_count = serializers.SerializerMethodField()
+    downloaded = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Template
+        fields = ['id', 'title', 'downloads_count', 'downloaded']
+
+    def get_downloads_count(self, obj):
+        return obj.downloads.count()
+
+    def get_downloaded(self, obj):
+        user = self.context.get("request").user
+        if user.is_authenticated:
+            return obj.downloads.filter(user=user).exists()
+        return False
+
 #Banner serializer to get all banners according to model name/fields
 class BannerSerializer(serializers.ModelSerializer):
     class Meta:
