@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Business
+from .models import Business, BusinessUpload
 
 class BusinessSerializer(serializers.ModelSerializer):
     class Meta:
@@ -25,3 +25,22 @@ class BusinessSerializer(serializers.ModelSerializer):
         # Prevent email from being updated
         validated_data.pop('email', None)
         return super().update(instance, validated_data)
+
+class BusinessUploadSerializer(serializers.ModelSerializer):
+    type = serializers.ChoiceField(choices=["logo", "banner"], write_only=True)
+    file = serializers.ImageField(write_only=True)
+
+    class Meta:
+        model = Business   # ✅ point to Business, not BusinessUpload
+        fields = ["id", "file", "type", "logo", "banner"]
+
+    def update(self, instance, validated_data):
+        upload_type = validated_data.pop("type")
+        file = validated_data.pop("file")
+
+        if upload_type == "logo":
+            instance.logo = file
+        elif upload_type == "banner":
+            instance.banner = file
+        instance.save()
+        return instance
