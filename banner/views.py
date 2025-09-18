@@ -111,6 +111,51 @@ class TemplateAnalyticsView(APIView):
             "downloads_count": downloads_count
         })
 
+class LikedTemplatesView(generics.ListAPIView):
+    serializer_class = TemplateSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    pagination_class = BannerPagination
+
+    def get_queryset(self):
+        user = self.request.user
+        return Template.objects.filter(likes__user=user)
+
+class DownloadedTemplatesView(generics.ListAPIView):
+    serializer_class = TemplateSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    pagination_class = BannerPagination
+
+    def get_queryset(self):
+        user = self.request.user
+        # return templates where the user has downloads
+        return Template.objects.filter(downloads__user=user)
+
+
+class TemplateRecommendationsView(generics.GenericAPIView):
+    serializer_class = TemplateSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        limit = int(request.query_params.get("limit", 5))
+
+        liked_categories = TemplateLike.objects.filter(user=user).values_list("template__category", flat=True)
+        downloaded_categories = TemplateDownload.objects.filter(user=user).values_list("template__category", flat=True)
+
+        categories = set(list(liked_categories) + list(downloaded_categories))
+
+        if categories:
+            recommended = Template.objects.filter(category__in=categories).exclude(
+                id__in=TemplateLike.objects.filter(user=user).values_list("template_id", flat=True)
+            ).exclude(
+                id__in=TemplateDownload.objects.filter(user=user).values_list("template_id", flat=True)
+            )[:limit]
+        else:
+            recommended = Template.objects.all().order_by("-created_at")[:limit]
+
+        serializer = self.get_serializer(recommended, many=True)
+        return Response(serializer.data)
+
 
 # -------------------- BANNER VIEWS ------------------ #
 
