@@ -33,6 +33,7 @@ class TemplateDetailView(generics.RetrieveAPIView):
     queryset = Template.objects.all()
     serializer_class = TemplateSerializer
     permission_classes = [permissions.AllowAny]
+    lookup_field = 'id'
 
 class TemplateLanguagesView(APIView):
     permission_classes = [IsAuthenticated]
