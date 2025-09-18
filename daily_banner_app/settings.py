@@ -135,7 +135,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR , 'media')
 #         'NAME': 'daily_banner_db',
 #         'USER': 'banner_user',
 #         'PASSWORD': 'DailyBannerApp01',
-#         'HOST': 'postgresql://daily_banner_app_user:ISNQtyeICuB8oa0gw9bNQBqCSvwQIHst@dpg-d2e4kaggjchc73e13om0-a.oregon-postgres.render.com/daily_banner_app',  # use your actual host here
+#         'HOST': 'postgresql://daily_banner_apps_user:JMZqjBGMkF8IacriqxBfCJrZTEdUahZD@dpg-d35abifdiees73anor4g-a.oregon-postgres.render.com/daily_banner_apps',  # use your actual host here
 #         'PORT': '5432',
 #         'OPTIONS': {
 #             'sslmode': 'require'
@@ -146,7 +146,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR , 'media')
 
 DATABASES = {
     "default": dj_database_url.parse(
-        "postgres://daily_banner_app_user:ISNQtyeICuB8oa0gw9bNQBqCSvwQIHst@dpg-d2e4kaggjchc73e13om0-a.oregon-postgres.render.com/daily_banner_app",
+        "postgresql://daily_banner_apps_user:JMZqjBGMkF8IacriqxBfCJrZTEdUahZD@dpg-d35abifdiees73anor4g-a.oregon-postgres.render.com/daily_banner_apps",
         conn_max_age=600,
         ssl_require=True
     )
