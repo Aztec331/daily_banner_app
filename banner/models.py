@@ -1,5 +1,4 @@
 from django.db import models
-from django.db import models
 from django.conf import settings
 
 
@@ -19,6 +18,29 @@ class Template(models.Model):
 
     def __str__(self):
         return f"{self.title} ({self.category})"
+
+
+class TemplateLike(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    template = models.ForeignKey('Template', on_delete=models.CASCADE, related_name="likes")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("user", "template")  # ensures one like per user
+
+
+# models.py
+class TemplateDownload(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    template = models.ForeignKey('Template', on_delete=models.CASCADE, related_name="downloads")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("user", "template")  # 1 download per user; remove if multiple allowed
+
+    def __str__(self):
+        return f"{self.user.email} downloaded {self.template.title}"
+
 
 #------------------------------------------------------------------------------------------------------------------------
 #Banner models

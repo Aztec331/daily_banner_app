@@ -6,12 +6,24 @@ from .views import UserBannersView
 from .views import BannerUpdateView
 from .views import PublishBannerAPIView, ArchiveBannerAPIView
 from .views import ExportBannerAPIView
+from .views import TemplateLikeView
+from .views import TemplateDownloadView
+from .views import TemplateCategoriesView
+from .views import TemplateAnalyticsView, LikedTemplatesView, DownloadedTemplatesView
+from .views import TemplateRecommendationsView
 
 urlpatterns = [
     # Templates
     path('templates/', views.TemplateListView.as_view(), name='template-list'),
     path('templates/<int:id>/', views.TemplateDetailView.as_view(), name='template-detail'),
     path('templates/languages/', views.TemplateLanguagesView.as_view(), name='template-languages'),
+    path("templates/<int:id>/like/", TemplateLikeView.as_view(), name="template-like"),
+    path("templates/<int:id>/download/", TemplateDownloadView.as_view(), name="template-download"),
+    path("templates/categories/", TemplateCategoriesView.as_view(), name="template-categories"),
+    path('templates/<int:id>/analytics/', TemplateAnalyticsView.as_view(), name='template-analytics'),
+    path('templates/liked/', LikedTemplatesView.as_view(), name='liked-templates'),
+    path("templates/downloaded/", DownloadedTemplatesView.as_view(), name="downloaded-templates"),
+    path("templates/recommendations/", TemplateRecommendationsView.as_view(), name="template-recommendations"),
 
     # Banners
     path('banners/', views.BannerCreateView.as_view(), name='banner-create'),
