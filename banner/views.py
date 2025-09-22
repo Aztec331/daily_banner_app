@@ -33,6 +33,7 @@ class TemplateDetailView(generics.RetrieveAPIView):
     queryset = Template.objects.all()
     serializer_class = TemplateSerializer
     permission_classes = [permissions.AllowAny]
+    lookup_field= "id"
 
 class TemplateLanguagesView(APIView):
     permission_classes = [IsAuthenticated]
@@ -213,6 +214,7 @@ class BannerUpdateView(generics.UpdateAPIView):
     queryset = Banner.objects.all()
     serializer_class = BannerUpdateSerializer
     permission_classes = [permissions.IsAuthenticated]
+    lookup_field = "id"
 
     def get_queryset(self):
         # User can update only their own banners
