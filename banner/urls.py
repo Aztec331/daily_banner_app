@@ -3,7 +3,6 @@ from . import views
 from banner.analytics_views import AdminAnalyticsView
 from .views import FontListView, FontCategoryView
 from .views import UserBannersView
-from .views import BannerUpdateView
 from .views import PublishBannerAPIView, ArchiveBannerAPIView
 from .views import ExportBannerAPIView
 from .views import TemplateLikeView
@@ -29,7 +28,6 @@ urlpatterns = [
     path('banners/', views.BannerCreateView.as_view(), name='banner-create'),
     path('banners/<int:id>/', views.BannerDetailView.as_view(), name='banner-detail'),
     path('admin/analytics/', AdminAnalyticsView.as_view(), name='admin-analytics'),
-    path('banners/<int:id>/', BannerUpdateView.as_view(), name='banner-update'),
     path('banners/my/', UserBannersView.as_view(), name='user-banners'), #example- http://127.0.0.1:8000/api/banners/my/?status=draft&page=1&limit=3
     path('banners/<int:id>/publish/', PublishBannerAPIView.as_view(), name='publish-banner'),
     path('banners/<int:id>/archive/', ArchiveBannerAPIView.as_view(), name='archive-banner'),

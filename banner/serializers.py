@@ -7,8 +7,6 @@ class TemplateSerializer(serializers.ModelSerializer):
         model = Template
         fields = '__all__'
 
- 
-
 #Template download info serializer 
 class TemplateDownloadSerializer(serializers.ModelSerializer):
     downloads_count = serializers.SerializerMethodField()
@@ -61,18 +59,7 @@ class BannerCreateSerializer(serializers.ModelSerializer):
         )
         return banner
 
-class BannerUpdateSerializer(serializers.ModelSerializer):
-    title = serializers.CharField(source='custom_name')
-
-    class Meta:
-        model = Banner
-        fields = ['title', 'description']
-
-    def update(self, instance, validated_data):
-        instance.custom_name = validated_data.get('custom_name', instance.custom_name)
-        instance.description = validated_data.get('description', instance.description)
-        instance.save()
-        return instance
+ 
 
 class FontSerializer(serializers.ModelSerializer):
     class Meta:

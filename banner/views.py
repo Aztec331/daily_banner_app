@@ -4,7 +4,7 @@ from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Template, TemplateLike, Banner, Font, TemplateDownload
-from .serializers import TemplateSerializer, BannerSerializer, FontSerializer, BannerCreateSerializer, BannerUpdateSerializer, TemplateDownloadSerializer
+from .serializers import TemplateSerializer, BannerSerializer, FontSerializer, BannerCreateSerializer, TemplateDownloadSerializer
 from .pagination import BannerPagination
 from rest_framework.views import APIView
 import io
@@ -33,7 +33,7 @@ class TemplateDetailView(generics.RetrieveAPIView):
     queryset = Template.objects.all()
     serializer_class = TemplateSerializer
     permission_classes = [permissions.AllowAny]
-    lookup_field = 'id'
+    lookup_field= "id"
 
 class TemplateLanguagesView(APIView):
     permission_classes = [IsAuthenticated]
@@ -65,11 +65,9 @@ class TemplateLikeView(APIView):
         return Response({"message": "Template liked"})
 
 class TemplateDownloadView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]  # No auth required
 
-    def post(self, request, id):
-        template = get_object_or_404(Template, id=id)
-
+    def download_file(self, template):
         if not template.template_image:
             raise Http404("Template file not found")
 
@@ -77,16 +75,23 @@ class TemplateDownloadView(APIView):
         if not os.path.exists(file_path):
             raise Http404("File does not exist on server")
 
-        # --- Log the download ---
-        TemplateDownload.objects.get_or_create(user=request.user, template=template)
-
-        # --- Send file ---
-        response = FileResponse(
+        return FileResponse(
             open(file_path, 'rb'),
             as_attachment=True,
             filename=os.path.basename(file_path)
         )
-        return response
+
+    def post(self, request, id):
+        template = Template.objects.filter(id=id).first()
+        if not template:
+            raise Http404("Template not found")
+        return self.download_file(template)
+
+    def get(self, request, id):   # <-- Add this for browser download
+        template = Template.objects.filter(id=id).first()
+        if not template:
+            raise Http404("Template not found")
+        return self.download_file(template)
 
 class TemplateCategoriesView(APIView):
     permission_classes = [IsAuthenticated]
@@ -210,14 +215,7 @@ class BannerDetailView(generics.RetrieveDestroyAPIView):
         # Only allow banners of the logged-in user
         return Banner.objects.filter(user=self.request.user)
 
-class BannerUpdateView(generics.UpdateAPIView):
-    queryset = Banner.objects.all()
-    serializer_class = BannerUpdateSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_queryset(self):
-        # User can update only their own banners
-        return Banner.objects.filter(user=self.request.user)
+ 
 
 class PublishBannerAPIView(APIView):
     permission_classes = [IsAuthenticated]

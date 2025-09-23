@@ -1,8 +1,10 @@
 # views.py
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
-from .models import Business
-from .serializers import BusinessSerializer
+from rest_framework.response import Response
+from rest_framework import status
+from .models import Business, BusinessUpload
+from .serializers import BusinessSerializer, BusinessUploadSerializer
 from django.shortcuts import render
 
 # GET /user/businesses
@@ -39,3 +41,27 @@ class BusinessDeleteView(generics.DestroyAPIView):
     def get_queryset(self):
         # Only allow deleting businesses owned by the logged-in user
         return Business.objects.filter(user=self.request.user)
+
+
+
+class BusinessUploadView(generics.CreateAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        try:
+            business = Business.objects.get(pk=pk, user=request.user)
+        except Business.DoesNotExist:
+            return Response({"detail": "Business not found."}, status=404)
+
+        serializer = BusinessUploadSerializer(business, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                "success": True,
+                "data": {
+                    "url": serializer.data["logo"] or serializer.data["banner"],
+                    "type": request.data.get("type"),
+                },
+                "message": "Image uploaded successfully"
+            }, status=200)
+        return Response(serializer.errors, status=400)

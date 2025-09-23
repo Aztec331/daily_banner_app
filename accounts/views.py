@@ -3,10 +3,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authtoken.models import Token
-from django.contrib.auth import login, logout
+from django.contrib.auth import logout
 from django.contrib.auth.models import update_last_login
 
-from .models import CompanyDetails
 from .serializers import RegisterSerializer, LoginSerializer, ProfileSerializer
 
 class RegisterView(generics.CreateAPIView):
